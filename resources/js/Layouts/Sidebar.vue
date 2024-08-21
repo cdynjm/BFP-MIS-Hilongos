@@ -38,7 +38,8 @@ onMounted(() => {
           <li class="nav-item">
             <div class="d-flex sidebar-profile">
               <div class="sidebar-profile-image">
-                <img src="/images/user.png" style="width: 40px; height: auto;" alt="image">
+                <img src="/images/user-2.png" style="width: 40px; height: auto;" alt="image" v-if="user?.role === 3">
+                <img src="/images/firefighter.png" style="width: 45px; height: auto;" alt="image" v-if="user?.role === 1 || user?.role === 2">
                 <span class="sidebar-status-indicator"></span>
               </div>
               <div class="sidebar-profile-name">

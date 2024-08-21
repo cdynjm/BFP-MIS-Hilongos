@@ -116,6 +116,7 @@ const chartSeries = ref([
                 <div class="col-md-8"></div>
 
                   <div class="col-md-4 mb-4">
+                    <Link :href="route('personnel.fire-incident')" class="nav-link p-0">
                     <div class="card rounded-md">
                           <div class="card-body shadow-md">
                               <div class="row">
@@ -131,6 +132,7 @@ const chartSeries = ref([
                               </div> <!-- end row-->
                           </div> <!-- end card body -->
                       </div> <!-- end card -->
+                    </Link>
                   </div>
 
                   <div class="col-md-4 mb-4">
