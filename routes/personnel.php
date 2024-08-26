@@ -27,6 +27,8 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('/inspections/{id}', [InspectionController::class, 'inspections'])->name('personnel.inspections');
             Route::patch('/inspections', [InspectionController::class, 'completeInspection'])->name('personnel.complete-inspection');
+            Route::post('/upload-form', [InspectionController::class, 'uploadForm'])->name('personnel.upload-form');
+            Route::delete('/delete-form', [InspectionController::class, 'deleteForm'])->name('personnel.delete-form');
 
             Route::get('/fire-incident', [FireIncidentController::class, 'fireIncident'])->name('personnel.fire-incident');
             Route::get('/fire-incident/search/', [FireIncidentController::class, 'searchYear'])->name('personnel.search-year');

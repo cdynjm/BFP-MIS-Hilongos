@@ -11,6 +11,7 @@ use App\Http\Controllers\Security\AESCipher;
 
 use App\Models\User;
 use App\Models\FireInspection;
+use App\Models\Personnel;
 
 class DashboardController extends Controller
 {
@@ -27,12 +28,15 @@ class DashboardController extends Controller
         $archive = FireInspection::where('applicantID', Auth::user()->applicant->id)
                     ->where('status', 3)->count();
         
+        $personnel = Personnel::with((new Personnel)->relation)->get();
+
         return Inertia::render('Applicant/Dashboard', [
             'auth' => Auth::user()->load(Auth::user()->relation),
             'pending' => $pending,
             'scheduled' => $scheduled,
             'archive' => $archive,
-
+            'personnel' => $personnel,
+ 
             'pendingID' => $this->aes->encrypt(1),
             'scheduledID' => $this->aes->encrypt(2),
             'archiveID' => $this->aes->encrypt(3),
@@ -41,23 +45,6 @@ class DashboardController extends Controller
 
     public function createRequestInspection(Request $request) {
 
-        FireInspection::create([
-            'applicantID' => Auth::user()->applicant->id,
-            'buildingName' => $request->buildingName,
-            'address' => $request->address,
-            'businessName' => $request->businessName,
-            'businessNature' => $request->businessNature,
-            'FSECNumber' => $request->FSECNumber,
-            'dateFSEC' => $request->dateFSEC,
-            'buildingPermit' => $request->buildingPermit,
-            'dateBuildingPermit' => $request->dateBuildingPermit,
-            'FSICNumber' => $request->FSICNumber,
-            'dateFSIC' => $request->dateFSIC,
-            'permitNumber' => $request->permitNumber,
-            'datePermitNumber' => $request->datePermitNumber,
-            'fireInsurance' => $request->fireInsurance,
-            'dateFireInsurance' => $request->dateFireInsurance,
-            'status' => 1
-        ]);
+        
     }
 }

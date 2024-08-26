@@ -11,6 +11,8 @@ use App\Http\Controllers\Security\AESCipher;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 
 use App\Models\User;
 use App\Models\Applicant;
@@ -36,9 +38,15 @@ class RegisterController extends Controller
             'error' => 'Email is already taken'
         ]); }
 
+        $timestamp = Carbon::now();
+        $extension = $request->file->getClientOriginalExtension();
+        $filename = \Str::slug($request->name.'-'.$timestamp).'.'.$extension;
+        $transferfile = $request->file->storeAs('public/profile/', $filename); 
+
         $applicant = Applicant::create([
             'name' => $request->name,
-            'contactNumber' => $request->contactNumber
+            'contactNumber' => $request->contactNumber,
+            'picture' => $filename
         ]);
 
         $user = User::create([

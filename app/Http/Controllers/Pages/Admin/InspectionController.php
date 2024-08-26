@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Security\AESCipher;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 
 use App\Models\User;
 use App\Models\FireInspection;
@@ -71,5 +73,81 @@ class InspectionController extends Controller
 
         $this->sms->sendSMStoApplicant($this->aes->decrypt($request->id));
         $this->sms->sendSMStoPersonnel($this->aes->decrypt($request->id));
+    }
+
+    public function completeInspection(Request $request) {
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update(['status' => 3]);
+    }
+
+    public function uploadForm(Request $request) {
+
+        $timestamp = Carbon::now();
+
+        $extension = $request->file->getClientOriginalExtension();
+        $filename = \Str::slug($request->name.'-checklist-form-'.$timestamp).'.'.$extension;
+        $transferfile = $request->file->storeAs('public/files/', $filename); 
+
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update(['file' => $filename]);
+    }
+
+    public function deleteForm(Request $request) {
+
+        $get = FireInspection::where('id', $this->aes->decrypt($request->id))->first();
+        File::delete(public_path("storage/files/{$get->file}"));
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update(['file' => null]);
+    }
+
+    public function reschedule(Request $request) {
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update(['schedule' => $request->date]);
+
+        $this->sms->sendSMStoApplicantReschedule($this->aes->decrypt($request->id));
+        $this->sms->sendSMStoPersonnelReschedule($this->aes->decrypt($request->id));
+    }
+
+    public function generateCertificate(Request $request) {
+
+        $recommendApproval = Personnel::where('id', $this->aes->decrypt($request->recommendedApproval))->first();
+        $approved = Personnel::where('id', $this->aes->decrypt($request->approvedBy))->first();
+
+
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update([
+            'buildingName' => $request->building,
+            'address' => $request->address,
+            'owner' => $request->owner,
+            'amountPaid' => $request->amountPaid,
+            'ORNumber' => $request->ORNumber,
+            'dateOR' => $request->date,
+            'recommendApproval' => $recommendApproval->name,
+            'recommendPosition' => $recommendApproval->position,
+            'approved' => $approved->name,
+            'approvedPosition' => $approved->position,
+            'certStatus' => 1
+        ]);
+
+        if($request->certType == 1) {
+            FireInspection::where('id', $this->aes->decrypt($request->id))->update([
+                'FSECNumber' => $request->fsicfsecNumber,
+                'dateFSEC' => $request->date
+            ]);
+        }
+
+        if($request->certType == 2 || $request->certType == 3) {
+            FireInspection::where('id', $this->aes->decrypt($request->id))->update([
+                'description' => $request->description,
+                'validFrom' => $request->validFrom,
+                'FSICNumber' => $request->fsicfsecNumber,
+                'dateFSIC' => $request->date
+            ]);
+        }
+    }
+
+    public function certificate(Request $request) {
+
+        $fireInspection = FireInspection::where('id', $this->aes->decrypt($request->id))->first();
+
+        if($fireInspection->certType == 1)
+            return view('FSEC', ['fi' => $fireInspection]);
+        if($fireInspection->certType == 2 || $fireInspection->certType == 3)
+            return view('FSIC', ['fi' => $fireInspection]);
     }
 }

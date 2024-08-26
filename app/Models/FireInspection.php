@@ -20,17 +20,24 @@ class FireInspection extends Model
         'businessNature',
         'FSECNumber',
         'dateFSEC',
-        'buildingPermit',
-        'dateBuildingPermit',
         'FSICNumber',
         'dateFSIC',
-        'permitNumber',
-        'datePermitNumber',
-        'fireInsurance',
-        'dateFireInsurance',
+        'owner',
+        'description',
+        'validFrom',
+        'amountPaid',
+        'ORNumber',
+        'dateOR',
+        'recommendApproval',
+        'recommendPosition',
+        'approved',
+        'approvedPosition',
         'schedule',
         'personnelID',
-        'status'
+        'status',
+        'certType',
+        'certStatus',
+        'file'
     ];
 
     public function personnel() {

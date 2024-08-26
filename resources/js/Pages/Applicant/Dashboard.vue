@@ -12,6 +12,7 @@ defineProps({
     pending: Array,
     scheduled: Array,
     archive: Array,
+    personnel: Array,
 
     pendingID: String,
     scheduledID: String,
@@ -20,20 +21,7 @@ defineProps({
 
 const createForm = useForm({
 
-    buildingName: null,
-    address: null,
-    businessName: null,
-    businessNature: null,
-    FSECNumber: null,
-    dateFSEC: null,
-    buildingPermit: null,
-    dateBuildingPermit: null,
-    FSICNumber: null,
-    dateFSIC: null,
-    permitNumber: null,
-    datePermitNumber: null,
-    fireInsurance: null,
-    dateFireInsurance: null,
+
 
     error: null,
     status: null,
@@ -149,131 +137,48 @@ const createFormData = () => {
                             </Link>
                         </div>
 
-                        <div class="col-md-12" style="margin-bottom: 30px">
+                        <div class="col-md-12 text-center">
                             <div class="card rounded-md">
                                 <div class="card-header">
-                                    Request for a Fire Safety Inspection
+                                    <p class="font-weight-bold"><i class="fa-solid fa-people-roof mr-1"></i> BUREAU OF
+                                        FIRE PROTECTION PERSONNEL</p>
                                 </div>
-                                <div class="card-body shadow-md">
-
-                                    <form action="" @submit.prevent="createFormData">
-
-                                        <div class="alert alert-danger" v-if="createForm.error">
-                                            {{ createForm.error }}
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-4">
+                                            The <span class="text-danger">BFP (Bureau of Fire Protection)</span>
+                                            personnel are dedicated public servants responsible for ensuring fire
+                                            safety, conducting fire inspections, and responding to emergencies. They are
+                                            well-trained in fire prevention, rescue operations, and disaster
+                                            preparedness, playing a crucial role in protecting lives and property. Their
+                                            commitment to public safety and adherence to strict protocols make them
+                                            essential in maintaining a secure environment within their communities.
                                         </div>
+                                        <div class="col-md-3 text-center mb-4" v-for="(ps, index) in personnel">
 
-                                        <div class="row" style="margin-bottom: 20px;">
-                                            <div class="col-md-2">
-                                                <img src="/images/fire-safety.webp"
-                                                    style="width: 100px; height: auto; margin: auto;" alt="">
-                                            </div>
+                                            <center>
+                                                <img :src="'/storage/profile/' + ps.picture"
+                                                    style="width: 60%; height: auto; box-shadow: 2px 5px 10px gray; border: 5px solid darkslategrey"
+                                                    class="rounded-md mb-3">
+                                            </center>
 
-                                            <div class="col-md-10">
-                                                <div style="margin-top: 15px; text-align: justify;">A fire safety
-                                                    inspection is a systematic evaluation of a building or facility to
-                                                    identify potential fire hazards, ensure compliance with fire safety
-                                                    regulations, and verify that fire prevention, detection, and
-                                                    suppression systems are properly installed and maintained. The
-                                                    inspection typically includes checking fire alarms, extinguishers,
-                                                    emergency exits, and evacuation plans, aiming to protect occupants
-                                                    and minimize the risk of fire-related incidents.</div>
-                                            </div>
+                                            <div class="font-weight-bold"><i
+                                                    class="fa-solid fa-circle-check text-success mr-1"></i> {{ ps.name
+                                                }}</div>
+                                            <div class="text-primary font-weight-bold" style="font-size: 12px;">{{
+                                                ps.position }}</div>
+                                            <div class="text-dark" style="font-size: 12px;"><span
+                                                    class="text-muted">e-Mail:</span> {{ ps.user.email }}</div>
+                                            <div class="text-dark" style="font-size: 12px;"><span
+                                                    class="text-muted">Contact:</span> {{ ps.contactNumber }}</div>
                                         </div>
-
-                                        <div style="margin-bottom: 20px;">
-                                            <b> Data Privacy Act of 2012 (Republic Act No. 10173)</b> is a law in the
-                                            Philippines designed to protect the personal information of individuals. It
-                                            mandates that all personal data collected by government and private entities
-                                            must be safeguarded to ensure privacy and security
-                                        </div>
-
-                                        <div style="margin-bottom: 20px;" class="text-primary">
-                                            <i>We are committed to safeguarding your personal information in compliance
-                                                with the <b>Data Privacy Act of 2012</b>. Your data will be collected,
-                                                processed, and stored securely, ensuring confidentiality and protection
-                                                against unauthorized access. We take your privacy seriously and will use
-                                                your information solely for its intended purpose.</i>
-                                        </div>
-
-                                        <hr style="margin-bottom: 20px;">
-
-                                        <p style="margin-bottom: 10px;" class="font-weight-bold">GENERAL INFORMATION</p>
-
-                                        <div class="row">
-                                            <div class="col-md-6">
-
-                                                <label for="">Building Name</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.buildingName" required>
-
-                                                <label for="">Address</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.address" required>
-
-                                                <label for="">Business Name</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.businessName" required>
-
-                                                <label for="">Nature of Business</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.businessNature" required>
-
-                                                <label for="">FSEC No.</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.FSECNumber" required>
-
-                                                <label for="">Date Issued (FSEC)</label>
-                                                <input type="date" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.dateFSEC" required>
-
-                                                <label for="">Building/Renovation Permit</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.buildingPermit" required>
-
-                                            </div>
-
-                                            <div class="col-md-6">
-
-                                                <label for="">Date Issued (Building Permit)</label>
-                                                <input type="date" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.dateBuildingPermit" required>
-
-                                                <label for="">FSIC No. (Latest)</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.FSICNumber" required>
-
-                                                <label for="">Date Issued (FSIC No.)</label>
-                                                <input type="date" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.dateFSIC" required>
-
-                                                <label for="">Business Permit No.</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.permitNumber" required>
-
-                                                <label for="">Date Issued (Business Permit No.)</label>
-                                                <input type="date" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.datePermitNumber" required>
-
-                                                <label for="">Fire Insurance Policy No.</label>
-                                                <input type="text" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.fireInsurance" required>
-
-                                                <label for="">Date Issued (Fire Insurance)</label>
-                                                <input type="date" class="form-control form-control-sm mb-2"
-                                                    v-model="createForm.dateFireInsurance" required>
-
-                                            </div>
-
-                                        </div>
-
-                                        <div class="p-3 text-center">
-                                            <button class="btn btn-sm btn-primary">Submit Request</button>
-                                        </div>
-
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+
+
                     </div>
                 </div>
                 <!-- content-wrapper ends -->

@@ -11,6 +11,8 @@ use App\Http\Controllers\Security\AESCipher;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 
 use App\Models\User;
 use App\Models\FireInspection;
@@ -99,6 +101,20 @@ class NavbarController extends Controller
 
         if(Auth::user()->role == 2) {
     
+            if(!empty($request->file('file'))) {
+
+                File::delete(public_path("storage/profile/".
+                     Auth::user()->personnel->first()->picture
+                ));
+    
+                $timestamp = Carbon::now();
+                $extension = $request->file->getClientOriginalExtension();
+                $filename = \Str::slug($request->name.'-'.$timestamp).'.'.$extension;
+                $transferfile = $request->file->storeAs('public/profile/', $filename); 
+    
+                Auth::user()->personnel->update(['picture' => $filename]);
+            }
+
             Auth::user()->personnel->update([
                 'name' => $request->name,
                 'contactNumber' => $request->contactNumber
@@ -116,6 +132,20 @@ class NavbarController extends Controller
         }
 
         if(Auth::user()->role == 3) {
+
+            if(!empty($request->file('file'))) {
+
+                File::delete(public_path("storage/profile/".
+                     Auth::user()->applicant->first()->picture
+                ));
+    
+                $timestamp = Carbon::now();
+                $extension = $request->file->getClientOriginalExtension();
+                $filename = \Str::slug($request->name.'-'.$timestamp).'.'.$extension;
+                $transferfile = $request->file->storeAs('public/profile/', $filename); 
+    
+                Auth::user()->applicant->update(['picture' => $filename]);
+            }
 
             Auth::user()->applicant->update([
                 'name' => $request->name,

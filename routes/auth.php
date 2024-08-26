@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Pages\Auth\LoginController;
 use App\Http\Controllers\Pages\Auth\RegisterController;
+use App\Http\Controllers\Pages\Auth\PasswordResetController;
 use App\Http\Controllers\Layouts\NavbarController;
 /*
 |--------------------------------------------------------------------------
@@ -22,11 +23,17 @@ Route::group(['middleware' => 'guest'], function () {
 
     Route::get('/register', [RegisterController::class, 'register'])->name('register');
     Route::post('/register', [RegisterController::class, 'authenticate'])->name('register.authenticate');
+
+    Route::get('/password/reset', [PasswordResetController::class, 'request'])->name('password.request');
+    Route::post('/password/email', [PasswordResetController::class, 'email'])->name('password.email');
+    Route::get('/password/reset/{token}', [PasswordResetController::class, 'reset'])->name('password.reset');
+    Route::post('/password/reset', [PasswordResetController::class, 'update'])->name('password.update');
+
 });
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/notification', [NavbarController::class, 'notification'])->name('notification');
-    Route::patch('/update-profile', [NavbarController::class, 'updateProfile'])->name('update-profile');
+    Route::post('/update-profile', [NavbarController::class, 'updateProfile'])->name('update-profile');
     Route::get('/logout', [LoginController::class, 'destroy'])->name('logout');
 });
 

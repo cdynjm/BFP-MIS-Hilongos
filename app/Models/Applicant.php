@@ -13,6 +13,7 @@ class Applicant extends Model
 
     protected $fillable = [
         'name',
-        'contactNumber'
+        'contactNumber',
+        'picture'
     ];
 }

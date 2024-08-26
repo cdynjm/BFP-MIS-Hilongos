@@ -58,4 +58,14 @@ class InspectionController extends Controller
     public function deleteInspection(Request $request) {
         FireInspection::where('id', $this->aes->decrypt($request->id))->delete();
     }
+
+    public function certificate(Request $request) {
+
+        $fireInspection = FireInspection::where('id', $this->aes->decrypt($request->id))->first();
+
+        if($fireInspection->certType == 1)
+            return view('FSEC', ['fi' => $fireInspection]);
+        if($fireInspection->certType == 2 || $fireInspection->certType == 3)
+            return view('FSIC', ['fi' => $fireInspection]);
+    }
 }

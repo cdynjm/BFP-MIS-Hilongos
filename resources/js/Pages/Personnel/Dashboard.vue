@@ -7,7 +7,7 @@ import Navbar from '@/Layouts/Navbar.vue';
 import Sidebar from '@/Layouts/Sidebar.vue';
 import Footer from '@/Layouts/Footer.vue';
 
-const props = defineProps({ 
+const props = defineProps({
     auth: Array,
     scheduled: Number,
     archive: Number,
@@ -33,7 +33,7 @@ const searchYear = () => {
 const countIncidentsPerMonth = (analytics) => {
     const incidentsPerMonth = {};
     const allMonths = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
 
@@ -82,125 +82,194 @@ const chartSeries = ref([
     },
 ]);
 
+const countFireAlarmLevels = (analytics) => {
+    const alarmLevelsCount = {
+        1: 0, // First Alarm
+        2: 0, // Second Alarm
+        3: 0, // Third Alarm
+        4: 0, // Fourth Alarm
+        5: 0, // Fifth Alarm
+        6: 0, // Task Force Alpha
+        7: 0, // Task Force Bravo
+        8: 0, // Task Force Charlie
+        9: 0, // Task Force Delta
+        10: 0 // General Alarm
+    };
+
+    analytics.forEach((incident) => {
+        const level = incident.fireAlarmLevel;
+        if (level >= 1 && level <= 10) {
+            alarmLevelsCount[level]++;
+        }
+    });
+
+    return alarmLevelsCount;
+};
+
+const fireAlarmLevelCounts = countFireAlarmLevels(props.fireIncidentAnalytics);
+
+const fireAlarmChartOptions = ref({
+    chart: {
+        title: {
+            text: 'Fire Alarm Levels Count',
+            align: 'center',
+        },
+    },
+    xaxis: {
+        categories: [
+            'First Alarm', 'Second Alarm', 'Third Alarm', 'Fourth Alarm',
+            'Fifth Alarm', 'Task Force Alpha', 'Task Force Bravo',
+            'Task Force Charlie', 'Task Force Delta', 'General Alarm'
+        ],
+    },
+    colors: ['#FF0000'],
+    tooltip: {
+        y: {
+            formatter: function (value) {
+                return Math.floor(value);
+            }
+        }
+    },
+});
+
+const fireAlarmChartSeries = ref([
+    {
+        name: 'Total Count ',
+        data: Object.values(fireAlarmLevelCounts).map(Math.floor),
+    },
+]);
+
 </script>
 
 <template>
     <div class="container-scroller">
 
-     <Navbar :page="'Dashboard'"/>
+        <Navbar :page="'Dashboard'" />
 
-     <div class="container-fluid page-body-wrapper">
+        <div class="container-fluid page-body-wrapper">
 
-     <Sidebar />
+            <Sidebar />
 
-     <div class="main-panel">
-          <div class="content-wrapper">
-              <div class="row">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
 
-                <div class="col-md-4">
-                    <form action="" @submit.prevent="searchYear">
-                        <div class="d-flex justify-content-between aligh-items-center mb-4">
-                            <select v-model="searchForm.search" id="year" class="form-control mr-4" style="border-radius: 5px;" required>
-                                <option value="">Select Year ...</option>
-                                <option v-for="year in years" :key="year" :value="year">
-                                    {{ year }}
-                                </option>
-                            </select>
-                            <button
-                                class="btn btn-success ms-3 d-flex justify-content-center align-items-center shadow-md">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
+                        <div class="col-md-4">
+                            <form action="" @submit.prevent="searchYear">
+                                <div class="d-flex justify-content-between aligh-items-center mb-4">
+                                    <select v-model="searchForm.search" id="year" class="form-control mr-4"
+                                        style="border-radius: 5px;" required>
+                                        <option value="">Select Year ...</option>
+                                        <option v-for="year in years" :key="year" :value="year">
+                                            {{ year }}
+                                        </option>
+                                    </select>
+                                    <button
+                                        class="btn btn-success ms-3 d-flex justify-content-center align-items-center shadow-md">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
-                </div>
-                <div class="col-md-8"></div>
+                        <div class="col-md-8"></div>
 
-                  <div class="col-md-4 mb-4">
-                    <Link :href="route('personnel.fire-incident')" class="nav-link p-0">
-                    <div class="card rounded-md">
-                          <div class="card-body shadow-md">
-                              <div class="row">
-                                  <div class="col-3">
-                                      <div class="avatar-md bg-gradient">
-                                        <i class="fa-solid fa-fire text-warning" style="font-size: 45px;"></i>
-                                      </div>
-                                  </div> <!-- end col -->
-                                  <div class="col-9 text-end">
-                                      <p class="text-muted mb-0 text-truncate">Fire Incident <b class="text-primary">{{ year }}</b></p>
-                                      <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{ fireIncident }}</h3>
-                                  </div> <!-- end col -->
-                              </div> <!-- end row-->
-                          </div> <!-- end card body -->
-                      </div> <!-- end card -->
-                    </Link>
-                  </div>
+                        <div class="col-md-4 mb-4">
+                            <Link :href="route('personnel.fire-incident')" class="nav-link p-0">
+                            <div class="card rounded-md">
+                                <div class="card-body shadow-md">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="avatar-md bg-gradient">
+                                                <i class="fa-solid fa-fire text-warning" style="font-size: 45px;"></i>
+                                            </div>
+                                        </div> <!-- end col -->
+                                        <div class="col-9 text-end">
+                                            <p class="text-muted mb-0 text-truncate">Fire Incident <b
+                                                    class="text-primary">{{ year }}</b></p>
+                                            <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
+                                                fireIncident }}</h3>
+                                        </div> <!-- end col -->
+                                    </div> <!-- end row-->
+                                </div> <!-- end card body -->
+                            </div> <!-- end card -->
+                            </Link>
+                        </div>
 
-                  <div class="col-md-4 mb-4">
-                    <Link :href="route('personnel.inspections', { id: scheduledID })" class="nav-link p-0">
-                    <div class="card rounded-md">
-                          <div class="card-body shadow-md">
-                              <div class="row">
-                                  <div class="col-3">
-                                      <div class="avatar-md bg-gradient">
-                                        <i class="fa-solid fa-calendar-check text-info" style="font-size: 45px;"></i>
-                                      </div>
-                                  </div> <!-- end col -->
-                                  <div class="col-9 text-end">
-                                      <p class="text-muted mb-0 text-truncate">Scheduled Inspections</p>
-                                      <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{ scheduled }}</h3>
-                                  </div> <!-- end col -->
-                              </div> <!-- end row-->
-                          </div> <!-- end card body -->
-                      </div> <!-- end card -->
-                    </Link>
-                  </div>
-                  <div class="col-md-4 mb-4">
-                    <Link :href="route('personnel.inspections', { id: archiveID })" class="nav-link p-0">
-                    <div class="card rounded-md">
-                        <div class="card-body shadow-md">
-                            <div class="row">
-                                <div class="col-3">
-                                    <div class="avatar-md bg-gradient">
-                                        <i class="fa-solid fa-box-open text-success"
-                                            style="font-size: 40px;"></i>
-                                    </div>
-                                </div> <!-- end col -->
-                                <div class="col-9 text-end">
-                                    <p class="text-muted mb-0 text-truncate">Archives</p>
-                                    <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
-                                        archive }}</h3>
-                                </div> <!-- end col -->
-                            </div> <!-- end row-->
-                        </div> <!-- end card body -->
-                    </div> <!-- end card -->
-                    </Link>
-                </div>
+                        <div class="col-md-4 mb-4">
+                            <Link :href="route('personnel.inspections', { id: scheduledID })" class="nav-link p-0">
+                            <div class="card rounded-md">
+                                <div class="card-body shadow-md">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="avatar-md bg-gradient">
+                                                <i class="fa-solid fa-calendar-check text-info"
+                                                    style="font-size: 45px;"></i>
+                                            </div>
+                                        </div> <!-- end col -->
+                                        <div class="col-9 text-end">
+                                            <p class="text-muted mb-0 text-truncate">Scheduled Inspections</p>
+                                            <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
+                                                scheduled }}</h3>
+                                        </div> <!-- end col -->
+                                    </div> <!-- end row-->
+                                </div> <!-- end card body -->
+                            </div> <!-- end card -->
+                            </Link>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <Link :href="route('personnel.inspections', { id: archiveID })" class="nav-link p-0">
+                            <div class="card rounded-md">
+                                <div class="card-body shadow-md">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="avatar-md bg-gradient">
+                                                <i class="fa-solid fa-box-open text-success"
+                                                    style="font-size: 40px;"></i>
+                                            </div>
+                                        </div> <!-- end col -->
+                                        <div class="col-9 text-end">
+                                            <p class="text-muted mb-0 text-truncate">Archives</p>
+                                            <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
+                                                archive }}</h3>
+                                        </div> <!-- end col -->
+                                    </div> <!-- end row-->
+                                </div> <!-- end card body -->
+                            </div> <!-- end card -->
+                            </Link>
+                        </div>
 
-                <div class="col-md-12 mt-2">
-                        <div class="card rounded-md">
-                            <div class="card-header">
-                                <b>Data Analytics for Fire Incidents <span class="text-primary">{{ year }}</span></b>
+                        <div class="col-md-12 mt-2">
+                            <div class="card rounded-md mb-4">
+                                <div class="card-header">
+                                    <b>Data Analytics for Fire Incidents <span class="text-primary">{{ year
+                                            }}</span></b>
+                                </div>
+                                <div class="card-body shadow-md">
+                                    <apexchart type="area" :options="chartOptions" :series="chartSeries" height="350" />
+                                </div>
                             </div>
-                            <div class="card-body shadow-md">
-                                <apexchart
-                                    type="line"
-                                    :options="chartOptions"
-                                    :series="chartSeries"
-                                    height="350"
-                                    />
+
+                            <div class="card rounded-md">
+                                <div class="card-header">
+                                    <b>Data Analytics for Fire Alarm Levels <span class="text-primary">{{ year
+                                            }}</span></b>
+                                </div>
+                                <div class="card-body shadow-md">
+                                    <apexchart type="area" :options="fireAlarmChartOptions"
+                                        :series="fireAlarmChartSeries" height="350" />
+                                </div>
                             </div>
                         </div>
-                 </div>
 
-              </div>
-          </div>
-          <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
-          <Footer></Footer>
-          <!-- partial -->
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:partials/_footer.html -->
+                <Footer></Footer>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
         </div>
-        <!-- main-panel ends -->
+        <!-- page-body-wrapper ends -->
     </div>
-      <!-- page-body-wrapper ends -->
-</div>
 </template>

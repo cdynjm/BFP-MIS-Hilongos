@@ -11,6 +11,8 @@ use App\Http\Controllers\Security\AESCipher;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 
 use App\Models\User;
 use App\Models\Personnel;
@@ -50,11 +52,17 @@ class PersonnelController extends Controller
             'error' => 'Email is already taken'
         ]); }
 
+        $timestamp = Carbon::now();
+        $extension = $request->file->getClientOriginalExtension();
+        $filename = \Str::slug($request->name.'-'.$timestamp).'.'.$extension;
+        $transferfile = $request->file->storeAs('public/profile/', $filename); 
+
         $personnel = Personnel::create([
             'name' => $request->name,
             'position' => $request->position,
-            'contactNumber' => $request->contactNumber
-        ]);
+            'contactNumber' => $request->contactNumber,
+            'picture' => $filename
+         ]);
 
         User::create([
             'personnelID' => $personnel->id,
@@ -80,11 +88,26 @@ class PersonnelController extends Controller
             'error' => 'Email is already taken'
         ]); }
 
+        if(!empty($request->file('file'))) {
+
+            File::delete(public_path("storage/profile/".
+                Personnel::where('id', $this->aes->decrypt($request->id))->first()->picture
+            ));
+
+            $timestamp = Carbon::now();
+            $extension = $request->file->getClientOriginalExtension();
+            $filename = \Str::slug($request->name.'-'.$timestamp).'.'.$extension;
+            $transferfile = $request->file->storeAs('public/profile/', $filename); 
+
+            Personnel::where('id', $this->aes->decrypt($request->id))->update(['picture' => $filename]);
+        }
+        
         Personnel::where('id', $this->aes->decrypt($request->id))->update([
             'name' => $request->name,
             'position' => $request->position,
             'contactNumber' => $request->contactNumber
         ]);
+        
 
         User::where('personnelID', $this->aes->decrypt($request->id))->update([
             'email' => $request->email,
@@ -98,6 +121,10 @@ class PersonnelController extends Controller
     }
 
     public function deletePersonnel(Request $request) {
+        
+        File::delete(public_path("storage/profile/".
+            Personnel::where('id', $this->aes->decrypt($request->id))->first()->picture
+        ));
         Personnel::where('id', $this->aes->decrypt($request->id))->delete();
         User::where('personnelID', $this->aes->decrypt($request->id))->delete();
     }

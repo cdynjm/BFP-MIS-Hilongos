@@ -9,7 +9,7 @@ import Footer from '@/Layouts/Footer.vue';
 
 import { ref, onMounted } from 'vue';
 
-defineProps({ 
+defineProps({
     auth: Array,
     id: Number,
     inspections: Array,
@@ -17,6 +17,12 @@ defineProps({
 
 onMounted(() => {
     $('#inspection-table').DataTable();
+});
+
+const uploadForm = useForm({
+    id: null,
+    name: null,
+    file: null
 });
 
 const completeInspection = (id) => {
@@ -42,97 +48,189 @@ const completeInspection = (id) => {
     })
 };
 
+const handleFileChange = (event) => {
+    uploadForm.file = event.target.files[0];
+};
+
+const uploadFile = (id, name) => {
+    uploadForm.id = id;
+    uploadForm.name = name
+    SweetAlert.fire({
+        icon: 'question',
+        title: 'Upload File?',
+        text: "This will upload the checklist form for this applicant.",
+        showCancelButton: true,
+        confirmButtonColor: '#160e45',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Confirm!'
+    }).then((result) => {
+        if (result.value) {
+            uploadForm.post(route('personnel.upload-form'), {
+                forceFormData: true,
+                onSuccess: () => {
+                    SweetAlert.fire({
+                        icon: 'success',
+                        title: 'Done',
+                        text: 'Checklist form uploaded successfully',
+                        confirmButtonColor: "#3a57e8"
+                    });
+                }
+            });
+        }
+    });
+};
+
+const deleteFile = (id) => {
+    const deleteForm = useForm({ id: id });
+    SweetAlert.fire({
+        icon: 'question',
+        title: 'Delete File?',
+        text: "This will delete the uploaded checklist form.",
+        showCancelButton: true,
+        confirmButtonColor: '#160e45',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Confirm!'
+    }).then((result) => {
+        if (result.value) {
+            deleteForm.delete(route('personnel.delete-form'));
+            SweetAlert.fire({
+                icon: 'success',
+                title: 'Done',
+                text: 'File deleted successfully',
+                confirmButtonColor: "#3a57e8"
+            });
+        }
+    })
+};
+
 </script>
 
 <template>
     <div class="container-scroller">
 
-     <Navbar v-if="id === 2" :page="'Scheduled'"/>
-     <Navbar v-if="id === 3" :page="'Archives'"/>
+        <Navbar v-if="id === 2" :page="'Scheduled'" />
+        <Navbar v-if="id === 3" :page="'Archives'" />
 
-     <div class="container-fluid page-body-wrapper">
+        <div class="container-fluid page-body-wrapper">
 
-     <Sidebar />
+            <Sidebar />
 
-     <div class="main-panel">
-          <div class="content-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
 
-            <!-- PAGE CONTENT -->
+                    <!-- PAGE CONTENT -->
 
-              <div class="row overflowx-auto">
-                  
-                <div class="col-md-12">
-                        <div class="card rounded-md">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="fw-bold" v-if="id === 2">Scheduled</h6>
-                                    <h6 class="fw-bold" v-if="id === 3">Archives</h6>
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="card rounded-md">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold" v-if="id === 2">Scheduled</h6>
+                                        <h6 class="fw-bold" v-if="id === 3">Archives</h6>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="card-body shadow-md">
-                                <div class="table-responsive">
-                                    <table class="table text-nowrap" id="inspection-table">
-                                        <thead>
-                                            <tr>
-                                               
-                                                <th style="font-size: 13px;">Information</th>
-                                                <th style="font-size: 13px;">Permit & Numbers</th>
-                                                <th style="font-size: 13px;">Status</th>
-                                                <th style="font-size: 13px;" v-if="id === 2">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr v-for="(ip, index) in inspections">
-                                               
-                                                <td>
-                                                    <div class="p-1"><span class="text-muted">Building Name:</span> {{ ip.buildingName }}</div>
-                                                    <div class="p-1"><span class="text-muted">Owner:</span> {{ ip.applicant.name }}</div>
-                                                    <div class="p-1"><span class="text-muted">Phone:</span> {{ ip.applicant.contactNumber }}</div>
-                                                    <div class="p-1"><span class="text-muted">Address:</span> {{ ip.address }}</div>
-                                                    <div class="p-1"><span class="text-muted">Business Name:</span> {{ ip.businessName }}</div>
-                                                    <div class="p-1"><span class="text-muted">Nature:</span> {{ ip.businessNature }}</div>
-                                                </td>
-                                                <td>
-                                                    <div class="p-1"><span class="text-muted">FSEC No.:</span> {{ ip.FSECNumber }} - {{ formatDate(ip.dateFSEC) }}</div>
-                                                    <div class="p-1"><span class="text-muted">Building Permit:</span> {{ ip.buildingPermit }} - {{ formatDate(ip.dateBuildingPermit) }}</div>
-                                                    <div class="p-1"><span class="text-muted">FSIC No.:</span> {{ ip.FSICNumber }} - {{ formatDate(ip.dateFSIC) }}</div>
-                                                    <div class="p-1"><span class="text-muted">Business Permit No.:</span> {{ ip.permitNumber }} - {{ formatDate(ip.datePermitNumber) }}</div>
-                                                    <div class="p-1"><span class="text-muted">Fire Insurance Policy No.:</span> {{ ip.fireInsurance }} - {{ formatDate(ip.dateFireInsurance) }}</div>
-                                                </td>
-                                                <td>
-                                                    <span class="text-warning" v-if="ip.status === 2">
-                                                        <div class="mb-2">
-                                                            Scheduled on {{ formatDate(ip.schedule) }}
+                                <div class="card-body shadow-md">
+                                    <div class="table-responsive">
+                                        <table class="table text-nowrap" id="inspection-table">
+                                            <thead>
+                                                <tr>
+
+                                                    <th style="font-size: 13px;">Information</th>
+                                                    <th style="font-size: 13px;">Status</th>
+                                                    <th style="font-size: 13px;" v-if="id === 2">Scanned Checklist</th>
+                                                    <th style="font-size: 13px;" v-if="id === 2">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(ip, index) in inspections">
+
+                                                    <td>
+                                                        <div style="display: flex; align-items: flex-start;">
+                                                            <img :src="'/storage/profile/' + ip.applicant.picture"
+                                                                style="width: 70px; height: auto; border-radius: 5px; box-shadow: 2px 5px 10px gray;"
+                                                                class="mb-3" alt="">
+
+                                                            <div style="margin-left: 15px;">
+                                                                <div class="p-1"><span class="text-muted">Owner:</span>
+                                                                    {{ ip.applicant.name }}</div>
+                                                                <div class="p-1"><span class="text-muted">Phone:</span>
+                                                                    {{ ip.applicant.contactNumber }}</div>
+                                                                <div class="p-1"><span
+                                                                        class="text-muted">Address:</span> {{ ip.address
+                                                                    }}</div>
+                                                            </div>
                                                         </div>
-                                                    </span>
-                                                    <p class="text-success text-center" v-if="ip.status === 3">
+
+                                                        <div class="p-1"><span class="text-muted">Building Name:</span>
+                                                            {{ ip.buildingName }}</div>
+
+                                                        <p v-if="ip.certType === 1" class="font-weight-bold ml-1">Fire
+                                                            Safety Evaluation Clearance</p>
+                                                        <p v-if="ip.certType === 2" class="font-weight-bold ml-1">Fire
+                                                            Safety Inspection Certificate (Occupancy)</p>
+                                                        <p v-if="ip.certType === 3" class="font-weight-bold ml-1">Fire
+                                                            Safety Inspection Certificate (Business)</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-warning" v-if="ip.status === 2">
+                                                            <div class="mb-2">
+                                                                Scheduled on {{ formatDate(ip.schedule) }}
+                                                            </div>
+
+                                                        </span>
+                                                        <p class="text-success" v-if="ip.status === 3">
                                                         <div>Done</div>
                                                         <div>Inspected On: {{ formatDate(ip.schedule) }}</div>
-                                                    </p>
-                                                </td>
-                                                <td v-if="id === 2">
-                                                    <button class="btn btn-sm btn-success" @click.prevent="completeInspection(ip.id)"><i class="fa-solid fa-check"></i> Done</button>
-                                                </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                        </p>
+                                                    </td>
+                                                    <td v-if="id === 2" class="">
+                                                        <form action=""
+                                                            @submit.prevent="uploadFile(ip.id, ip.applicant.name)"
+                                                            v-if="ip.file === null">
+                                                            <input type="file" class="form-control form-control-sm mb-3"
+                                                                @change="handleFileChange"
+                                                                accept=".pdf, .jpg, .png, .jpeg" required>
+                                                            <button class="btn btn-sm btn-info">Upload</button>
+                                                        </form>
+
+                                                        <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null"
+                                                            target="_blank">
+                                                            <i class="fa-solid fa-file-pdf"></i> Checklist Form
+                                                        </a>
+                                                        <a href="#" class="ml-2 text-danger" v-if="ip.file != null"
+                                                            @click.prevent="deleteFile(ip.id)"><i
+                                                                class="fa-solid fa-trash-can"></i></a>
+                                                    </td>
+                                                    <td v-if="id === 2" class="text-center">
+                                                        <button class="btn btn-sm btn-success"
+                                                            @click.prevent="completeInspection(ip.id)"
+                                                            :disabled="ip.file === null"><i
+                                                                class="fa-solid fa-check"></i> Done</button>
+                                                        <i class="text-danger d-block mt-3" style="font-size: 12px;"
+                                                            v-if="ip.file == null">Please upload the checklist form
+                                                            first</i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                </div>
 
-              </div>
-          </div>
-          <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
-          <Footer></Footer>
-          <!-- partial -->
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:partials/_footer.html -->
+                <Footer></Footer>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
         </div>
-        <!-- main-panel ends -->
+        <!-- page-body-wrapper ends -->
     </div>
-      <!-- page-body-wrapper ends -->
-</div>
 </template>
 
 <script>

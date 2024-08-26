@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Security\AESCipher;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 
 use App\Models\User;
 use App\Models\FireInspection;
@@ -48,5 +50,23 @@ class InspectionController extends Controller
 
     public function completeInspection(Request $request) {
         FireInspection::where('id', $this->aes->decrypt($request->id))->update(['status' => 3]);
+    }
+
+    public function uploadForm(Request $request) {
+
+        $timestamp = Carbon::now();
+
+        $extension = $request->file->getClientOriginalExtension();
+        $filename = \Str::slug($request->name.'-checklist-form-'.$timestamp).'.'.$extension;
+        $transferfile = $request->file->storeAs('public/files/', $filename); 
+
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update(['file' => $filename]);
+    }
+
+    public function deleteForm(Request $request) {
+
+        $get = FireInspection::where('id', $this->aes->decrypt($request->id))->first();
+        File::delete(public_path("storage/files/{$get->file}"));
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update(['file' => null]);
     }
 }

@@ -16,7 +16,8 @@ class Personnel extends Model
     protected $fillable = [
         'name',
         'position',
-        'contactNumber'
+        'contactNumber',
+        'picture'
     ];
 
     public function user() {

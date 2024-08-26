@@ -29,7 +29,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 			Route::get('/personnel', [PersonnelController::class, 'personnel'])->name('admin.personnel');
 			Route::post('/personnel', [PersonnelController::class, 'createPersonnel'])->name('admin.create-personnel');
-			Route::patch('/personnel', [PersonnelController::class, 'updatePersonnel'])->name('admin.update-personnel');
+			Route::post('/update-personnel', [PersonnelController::class, 'updatePersonnel'])->name('admin.update-personnel');
 			Route::delete('/personnel', [PersonnelController::class, 'deletePersonnel'])->name('admin.delete-personnel');
 
 			Route::get('/fire-incident', [FireIncidentController::class, 'fireIncident'])->name('admin.fire-incident');
@@ -40,9 +40,16 @@ Route::group(['middleware' => 'auth'], function () {
 
 			Route::get('/inspections/{id}', [InspectionController::class, 'inspections'])->name('admin.inspections');
 			Route::patch('/inspections', [InspectionController::class, 'scheduleInspection'])->name('admin.schedule-inspection');
+			Route::patch('/complete-inspections', [InspectionController::class, 'completeInspection'])->name('admin.complete-inspection');
+            Route::post('/upload-form', [InspectionController::class, 'uploadForm'])->name('admin.upload-form');
+            Route::delete('/delete-form', [InspectionController::class, 'deleteForm'])->name('admin.delete-form');
+			Route::patch('/reschedule', [InspectionController::class, 'reschedule'])->name('admin.reschedule');
+			Route::patch('/generate-certificate', [InspectionController::class, 'generateCertificate'])->name('admin.generate-certificate');
 
 			Route::get('/sms-token', [SMSController::class, 'SMS'])->name('admin.sms-token');
 			Route::patch('/sms-token', [SMSController::class, 'updateSMS'])->name('admin.update-sms-token');
+
+			Route::get('/certificate/{id}', [InspectionController::class, 'certificate']);
 
 		});
 	});
