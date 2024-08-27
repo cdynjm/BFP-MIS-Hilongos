@@ -128,4 +128,5 @@ class PersonnelController extends Controller
         Personnel::where('id', $this->aes->decrypt($request->id))->delete();
         User::where('personnelID', $this->aes->decrypt($request->id))->delete();
     }
+    
 }

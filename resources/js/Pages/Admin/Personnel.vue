@@ -108,6 +108,7 @@ const createPersonnelData = () => {
     });
 };
 
+
 const updatePersonnelData = () => {
     SweetAlert.fire({
         position: 'center',
