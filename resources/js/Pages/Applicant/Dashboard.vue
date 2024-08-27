@@ -76,17 +76,24 @@ const createFormData = () => {
                             <div class="card rounded-md">
                                 <div class="card-body shadow-md">
                                     <div class="row">
-                                        <div class="col-2">
-                                            <div class="avatar-md bg-gradient">
-                                                <i class="fa-solid fa-hourglass-half text-danger"
-                                                    style="font-size: 40px;"></i>
-                                            </div>
-                                        </div> <!-- end col -->
-                                        <div class="col-10 text-end">
+
+                                        <div class="col-9 text-end">
                                             <p class="text-muted mb-0 text-truncate">Your Pending Request</p>
                                             <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
-                                                pending }}</h3>
+                                                pending }} <span class="text-muted ml-1"
+                                                    style="font-size: 12px; font-weight: normal;"><i
+                                                        class="fa-solid fa-circle-info text-danger"></i> More
+                                                    Info</span></h3>
                                         </div> <!-- end col -->
+                                        <div class="col-3">
+                                            <div class="avatar-md bg-gradient">
+                                                <iconify-icon icon="ic:twotone-pending" width="50" height="50"
+                                                    class="text-danger"></iconify-icon>
+                                            </div>
+                                        </div> <!-- end col -->
+                                        <div class="col-md-12">
+                                            <hr class="mt-3">
+                                        </div>
                                     </div> <!-- end row-->
                                 </div> <!-- end card body -->
                             </div> <!-- end card -->
@@ -98,17 +105,24 @@ const createFormData = () => {
                             <div class="card rounded-md">
                                 <div class="card-body shadow-md">
                                     <div class="row">
-                                        <div class="col-2">
-                                            <div class="avatar-md bg-gradient">
-                                                <i class="fa-solid fa-calendar-check text-warning"
-                                                    style="font-size: 40px;"></i>
-                                            </div>
-                                        </div> <!-- end col -->
-                                        <div class="col-10 text-end">
+
+                                        <div class="col-9 text-end">
                                             <p class="text-muted mb-0 text-truncate">Your Scheduled Inspections</p>
                                             <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
-                                                scheduled }}</h3>
+                                                scheduled }} <span class="text-muted ml-1"
+                                                    style="font-size: 12px; font-weight: normal;"><i
+                                                        class="fa-solid fa-circle-info text-warning"></i> More
+                                                    Info</span></h3>
                                         </div> <!-- end col -->
+                                        <div class="col-3">
+                                            <div class="avatar-md bg-gradient">
+                                                <iconify-icon icon="uim:schedule" width="50" height="50"
+                                                    class="text-warning"></iconify-icon>
+                                            </div>
+                                        </div> <!-- end col -->
+                                        <div class="col-md-12">
+                                            <hr class="mt-3">
+                                        </div>
                                     </div> <!-- end row-->
                                 </div> <!-- end card body -->
                             </div> <!-- end card -->
@@ -120,17 +134,23 @@ const createFormData = () => {
                             <div class="card rounded-md">
                                 <div class="card-body shadow-md">
                                     <div class="row">
-                                        <div class="col-2">
-                                            <div class="avatar-md bg-gradient">
-                                                <i class="fa-solid fa-box-open text-success"
-                                                    style="font-size: 40px;"></i>
-                                            </div>
-                                        </div> <!-- end col -->
-                                        <div class="col-10 text-end">
+                                        <div class="col-9 text-end">
                                             <p class="text-muted mb-0 text-truncate">Archives</p>
                                             <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
-                                                archive }}</h3>
+                                                archive }} <span class="text-muted ml-1"
+                                                    style="font-size: 12px; font-weight: normal;"><i
+                                                        class="fa-solid fa-circle-info text-success"></i> More
+                                                    Info</span></h3>
                                         </div> <!-- end col -->
+                                        <div class="col-3">
+                                            <div class="avatar-md bg-gradient">
+                                                <iconify-icon icon="solar:inbox-archive-bold" width="50" height="50"
+                                                    class="text-success"></iconify-icon>
+                                            </div>
+                                        </div> <!-- end col -->
+                                        <div class="col-md-12">
+                                            <hr class="mt-3">
+                                        </div>
                                     </div> <!-- end row-->
                                 </div> <!-- end card body -->
                             </div> <!-- end card -->

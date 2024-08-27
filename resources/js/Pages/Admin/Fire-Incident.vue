@@ -366,7 +366,7 @@ const deleteFireIncidentReportData = (id) => {
 
                     <div class="row">
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <form action="" @submit.prevent="searchYear">
                                 <div class="d-flex justify-content-between aligh-items-center mb-4">
                                     <select v-model="searchForm.search" id="year" class="form-control mr-4"
@@ -377,7 +377,7 @@ const deleteFireIncidentReportData = (id) => {
                                         </option>
                                     </select>
                                     <button
-                                        class="btn btn-success ms-3 d-flex justify-content-center align-items-center shadow-md">
+                                        class="btn btn-dark btn-sm ms-3 d-flex justify-content-center align-items-center shadow-md rounded-md">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </button>
                                 </div>
@@ -446,10 +446,11 @@ const deleteFireIncidentReportData = (id) => {
                                                     <td>
                                                         <div class="p-1"><span class="text-muted">Casualties:</span>
                                                             <span class="font-weight-bold" style="font-size: 20px;">{{
-                                                                fi.casualties }}</span></div>
+                                                                fi.casualties }}</span>
+                                                        </div>
                                                         <div class="p-1"><span class="text-muted">Injuries:</span> <span
                                                                 class="font-weight-bold" style="font-size: 20px;">{{
-                                                                fi.injuries }}</span></div>
+                                                                    fi.injuries }}</span></div>
                                                     </td>
                                                     <td>
                                                         {{ fi.fireCause }}

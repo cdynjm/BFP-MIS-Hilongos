@@ -65,8 +65,6 @@ const setSchedule = (id) => {
     })
 };
 
-
-
 const uploadForm = useForm({
     id: null,
     name: null,
@@ -352,37 +350,36 @@ const updateStatus = (id, name) => {
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                
-                                    <div class="modal-body">
 
-                                        <div class="row">
-                                            <div class="col-md-12 mb-4">
-                                                <form action="" @submit.prevent="uploadFile()">
-                                                    <label for="">Upload Checklist Form</label>
-                                                    <input type="file" class="form-control form-control-sm mb-3"
-                                                        @change="handleFileChange"
-                                                        accept=".pdf, .jpg, .png, .jpeg" required>
-                                                    <button class="btn btn-sm btn-info">Upload</button>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <form action="" @submit.prevent="reschedule()">
-                                                    <label class="text-dark text-muted">Reschedule
-                                                        Visit/Inspection</label>
-                                                    <input type="date"
-                                                        class="form-control form-control-sm mb-3"
-                                                        v-model="rescheduleForm.date" :min="today" required>
-                                                    <button class="btn btn-sm btn-info">Set</button>
-                                                </form>
-                                            </div>
+                                <div class="modal-body">
+
+                                    <div class="row">
+                                        <div class="col-md-12 mb-4">
+                                            <form action="" @submit.prevent="uploadFile()">
+                                                <label for="">Upload Checklist Form</label>
+                                                <input type="file" class="form-control form-control-sm mb-3"
+                                                    @change="handleFileChange" accept=".pdf, .jpg, .png, .jpeg"
+                                                    required>
+                                                <button class="btn btn-sm btn-info">Upload</button>
+                                            </form>
                                         </div>
-
+                                        <div class="col-md-12">
+                                            <form action="" @submit.prevent="reschedule()">
+                                                <label class="text-dark text-muted">Reschedule
+                                                    Visit/Inspection</label>
+                                                <input type="date" class="form-control form-control-sm mb-3"
+                                                    v-model="rescheduleForm.date" :min="today" required>
+                                                <button class="btn btn-sm btn-info">Set</button>
+                                            </form>
+                                        </div>
                                     </div>
+
+                                </div>
 
                                 <div class="modal-footer">
-                                        <button type="button" class="btn btn-sm btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                    </div>
+                                    <button type="button" class="btn btn-sm btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -462,7 +459,7 @@ const updateStatus = (id, name) => {
                                                         </p>
                                                     </td>
                                                     <td v-if="id === 2 || id === 3" class="">
-                                                        
+
 
                                                         <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null"
                                                             target="_blank" class="text-decoration-none">
@@ -472,7 +469,8 @@ const updateStatus = (id, name) => {
                                                             v-if="ip.file != null && id === 2"
                                                             @click.prevent="deleteFile(ip.id)"><i
                                                                 class="fa-solid fa-trash-can"></i></a>
-                                                        <p v-if="ip.file === null" class="text-danger" style="font-size: 12px;">No File Yet</p>
+                                                        <p v-if="ip.file === null" class="text-danger"
+                                                            style="font-size: 12px;">No File Yet</p>
                                                     </td>
                                                     <td v-if="id === 1">
                                                         <form action="" class="text-center"
@@ -496,16 +494,20 @@ const updateStatus = (id, name) => {
                                                         </form>
                                                     </td>
                                                     <td v-if="id === 2" class="text-center">
-                                                        <button class="btn btn-sm btn-success" style="font-size: 12px;"
+                                                        <button class="btn btn-sm btn-success p-1"
+                                                            style="font-size: 12px;"
                                                             @click.prevent="completeInspection(ip.id)"
-                                                            :disabled="ip.file === null"><i
-                                                                class="fa-solid fa-check"></i> Done</button>
+                                                            :disabled="ip.file === null"><i class="fa-solid fa-check"
+                                                                style="font-size: 12px;"></i> Done</button>
                                                         <i class="text-danger d-block mt-3" style="font-size: 12px;"
                                                             v-if="ip.file == null">Please upload the checklist form
                                                             first</i>
-                                                            <button class="btn btn-sm btn-info mt-3" style="font-size: 12px;" @click.prevent="updateStatus(ip.id, ip.applicant.name)" v-if="ip.file === null">
-                                                                <i class="fa-solid fa-pen-nib"></i> Edit
-                                                            </button>
+                                                        <button class="btn btn-sm btn-info mt-3 p-1"
+                                                            @click.prevent="updateStatus(ip.id, ip.applicant.name)"
+                                                            v-if="ip.file === null" style="font-size: 12px;">
+                                                            <i class="fa-solid fa-pen-fancy"
+                                                                style="font-size: 12px;"></i> Edit
+                                                        </button>
                                                     </td>
                                                     <td v-if="id === 3" class="">
                                                         <button class="btn btn-sm btn-info"
