@@ -293,10 +293,10 @@ const deletePersonnelData = (id) => {
                                         <table class="table text-nowrap" id="personnel-table">
                                             <thead>
                                                 <tr>
-                                                    <th style="font-size: 13px;">Name</th>
-                                                    <th style="font-size: 13px;">Position</th>
-                                                    <th style="font-size: 13px;">Contact Number</th>
-                                                    <th style="font-size: 13px;">Action</th>
+                                                    <th style="font-size: 12px;"><p>Name</p></th>
+                                                    <th style="font-size: 12px;"><p class="ml-4">Position</p></th>
+                                                    <th style="font-size: 12px;"><p>Contact Number</p></th>
+                                                    <th style="font-size: 12px;"><p>Action</p></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -304,12 +304,16 @@ const deletePersonnelData = (id) => {
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <img :src="'/storage/profile/' + ps.picture"
-                                                                style="width: 60px; height: auto; border-radius: 5px"
+                                                                style="width: 50px; height: auto; border-radius: 5px"
                                                                 class="mr-3" alt="">
                                                             <b>{{ ps.name }}</b>
                                                         </div>
                                                     </td>
-                                                    <td>{{ ps.position }}</td>
+                                                    <td>
+                                                        <p class="ml-4">
+                                                            {{ ps.position }}
+                                                        </p>
+                                                    </td>
                                                     <td>{{ ps.contactNumber }}</td>
                                                     <td>
                                                         <a href="#" class="p-2" @click.prevent="editPersonnel(

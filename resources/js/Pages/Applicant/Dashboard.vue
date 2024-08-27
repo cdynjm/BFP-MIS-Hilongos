@@ -168,7 +168,7 @@ const createFormData = () => {
                                             <div class="text-primary font-weight-bold" style="font-size: 12px;">{{
                                                 ps.position }}</div>
                                             <div class="text-dark" style="font-size: 12px;"><span
-                                                    class="text-muted">e-Mail:</span> {{ ps.user.email }}</div>
+                                                    class="text-muted">e-mail:</span> {{ ps.user.email }}</div>
                                             <div class="text-dark" style="font-size: 12px;"><span
                                                     class="text-muted">Contact:</span> {{ ps.contactNumber }}</div>
                                         </div>

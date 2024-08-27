@@ -15,7 +15,14 @@ defineProps({
     inspections: Array,
 })
 
+const updateModal = ref(null);
+
 onMounted(() => {
+
+    updateModal.value = new bootstrap.Modal($('#updateModal'), {
+        keyboard: false
+    });
+
     $('#inspection-table').DataTable();
 });
 
@@ -52,9 +59,7 @@ const handleFileChange = (event) => {
     uploadForm.file = event.target.files[0];
 };
 
-const uploadFile = (id, name) => {
-    uploadForm.id = id;
-    uploadForm.name = name
+const uploadFile = () => {
     SweetAlert.fire({
         icon: 'question',
         title: 'Upload File?',
@@ -68,6 +73,7 @@ const uploadFile = (id, name) => {
             uploadForm.post(route('personnel.upload-form'), {
                 forceFormData: true,
                 onSuccess: () => {
+                    updateModal.value.hide()
                     SweetAlert.fire({
                         icon: 'success',
                         title: 'Done',
@@ -103,6 +109,12 @@ const deleteFile = (id) => {
     })
 };
 
+const updateStatus = (id, name) => {
+    uploadForm.id = id;
+    uploadForm.name = name;
+    updateModal.value.show()
+}
+
 </script>
 
 <template>
@@ -117,6 +129,40 @@ const deleteFile = (id) => {
 
             <div class="main-panel">
                 <div class="content-wrapper">
+
+                    <div class="modal fade" id="updateModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Update Status</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                
+                                    <div class="modal-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12 mb-4">
+                                                <form action="" @submit.prevent="uploadFile()">
+                                                    <label for="">Upload Checklist Form</label>
+                                                    <input type="file" class="form-control form-control-sm mb-3"
+                                                        @change="handleFileChange"
+                                                        accept=".pdf, .jpg, .png, .jpeg" required>
+                                                    <button class="btn btn-sm btn-info">Upload</button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                <div class="modal-footer">
+                                        <button type="button" class="btn btn-sm btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- PAGE CONTENT -->
 
@@ -186,14 +232,7 @@ const deleteFile = (id) => {
                                                         </p>
                                                     </td>
                                                     <td v-if="id === 2" class="">
-                                                        <form action=""
-                                                            @submit.prevent="uploadFile(ip.id, ip.applicant.name)"
-                                                            v-if="ip.file === null">
-                                                            <input type="file" class="form-control form-control-sm mb-3"
-                                                                @change="handleFileChange"
-                                                                accept=".pdf, .jpg, .png, .jpeg" required>
-                                                            <button class="btn btn-sm btn-info">Upload</button>
-                                                        </form>
+                                                        
 
                                                         <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null"
                                                             target="_blank">
@@ -202,15 +241,21 @@ const deleteFile = (id) => {
                                                         <a href="#" class="ml-2 text-danger" v-if="ip.file != null"
                                                             @click.prevent="deleteFile(ip.id)"><i
                                                                 class="fa-solid fa-trash-can"></i></a>
+
+                                                        <p v-if="ip.file === null" class="text-danger" style="font-size: 12px;">No File Yet</p>
                                                     </td>
                                                     <td v-if="id === 2" class="text-center">
-                                                        <button class="btn btn-sm btn-success"
+                                                        <button class="btn btn-sm btn-success" style="font-size: 12px;"
                                                             @click.prevent="completeInspection(ip.id)"
                                                             :disabled="ip.file === null"><i
                                                                 class="fa-solid fa-check"></i> Done</button>
                                                         <i class="text-danger d-block mt-3" style="font-size: 12px;"
                                                             v-if="ip.file == null">Please upload the checklist form
                                                             first</i>
+
+                                                            <button class="btn btn-sm btn-info mt-3" style="font-size: 12px;" @click.prevent="updateStatus(ip.id, ip.applicant.name)" v-if="ip.file === null">
+                                                                <i class="fa-solid fa-pen-nib"></i> Edit
+                                                            </button>
                                                     </td>
                                                 </tr>
                                             </tbody>

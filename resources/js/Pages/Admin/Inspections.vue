@@ -18,10 +18,15 @@ defineProps({
 })
 
 const certificateModal = ref(null);
+const updateModal = ref(null);
 
 onMounted(() => {
 
     certificateModal.value = new bootstrap.Modal($('#certificateModal'), {
+        keyboard: false
+    });
+
+    updateModal.value = new bootstrap.Modal($('#updateModal'), {
         keyboard: false
     });
 
@@ -93,9 +98,7 @@ const handleFileChange = (event) => {
     uploadForm.file = event.target.files[0];
 };
 
-const uploadFile = (id, name) => {
-    uploadForm.id = id;
-    uploadForm.name = name
+const uploadFile = () => {
     SweetAlert.fire({
         icon: 'question',
         title: 'Upload File?',
@@ -109,6 +112,7 @@ const uploadFile = (id, name) => {
             uploadForm.post(route('admin.upload-form'), {
                 forceFormData: true,
                 onSuccess: () => {
+                    updateModal.value.hide();
                     SweetAlert.fire({
                         icon: 'success',
                         title: 'Done',
@@ -149,8 +153,7 @@ const rescheduleForm = useForm({
     date: null
 });
 
-const reschedule = (id) => {
-    rescheduleForm.id = id
+const reschedule = () => {
     SweetAlert.fire({
         icon: 'question',
         title: 'Reschedule Inspection?',
@@ -163,6 +166,7 @@ const reschedule = (id) => {
         if (result.value) {
             rescheduleForm.patch(route('admin.reschedule'));
             rescheduleForm.date = null;
+            updateModal.value.hide();
             SweetAlert.fire({
                 icon: 'success',
                 title: 'Done',
@@ -221,6 +225,13 @@ const generateCertificateFormData = () => {
         }
     })
 };
+
+const updateStatus = (id, name) => {
+    uploadForm.id = id;
+    uploadForm.name = name;
+    rescheduleForm.id = id;
+    updateModal.value.show()
+}
 
 </script>
 
@@ -330,6 +341,50 @@ const generateCertificateFormData = () => {
                         </div>
                     </div>
 
+                    <div class="modal fade" id="updateModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Update Status</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                
+                                    <div class="modal-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12 mb-4">
+                                                <form action="" @submit.prevent="uploadFile()">
+                                                    <label for="">Upload Checklist Form</label>
+                                                    <input type="file" class="form-control form-control-sm mb-3"
+                                                        @change="handleFileChange"
+                                                        accept=".pdf, .jpg, .png, .jpeg" required>
+                                                    <button class="btn btn-sm btn-info">Upload</button>
+                                                </form>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <form action="" @submit.prevent="reschedule()">
+                                                    <label class="text-dark text-muted">Reschedule
+                                                        Visit/Inspection</label>
+                                                    <input type="date"
+                                                        class="form-control form-control-sm mb-3"
+                                                        v-model="rescheduleForm.date" :min="today" required>
+                                                    <button class="btn btn-sm btn-info">Set</button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                <div class="modal-footer">
+                                        <button type="button" class="btn btn-sm btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- PAGE CONTENT -->
 
                     <div class="row overflowx-auto">
@@ -398,18 +453,6 @@ const generateCertificateFormData = () => {
                                                                 Personnel: {{ ip.personnel.name }}
                                                             </div>
 
-                                                            <hr class="my-4" v-if="ip.file === null">
-
-                                                            <form action="" @submit.prevent="reschedule(ip.id)"
-                                                                v-if="ip.file === null">
-                                                                <label class="text-dark text-muted">Reschedule
-                                                                    Visit/Inspection</label>
-                                                                <input type="date"
-                                                                    class="form-control form-control-sm mb-3"
-                                                                    v-model="rescheduleForm.date" :min="today" required>
-                                                                <button class="btn btn-sm btn-info">Set</button>
-                                                            </form>
-
                                                         </span>
                                                         <p class="text-success" v-if="ip.status === 3">
                                                         <div>Done</div>
@@ -417,14 +460,7 @@ const generateCertificateFormData = () => {
                                                         </p>
                                                     </td>
                                                     <td v-if="id === 2 || id === 3" class="">
-                                                        <form action=""
-                                                            @submit.prevent="uploadFile(ip.id, ip.applicant.name)"
-                                                            v-if="ip.file === null">
-                                                            <input type="file" class="form-control form-control-sm mb-3"
-                                                                @change="handleFileChange"
-                                                                accept=".pdf, .jpg, .png, .jpeg" required>
-                                                            <button class="btn btn-sm btn-info">Upload</button>
-                                                        </form>
+                                                        
 
                                                         <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null"
                                                             target="_blank" class="text-decoration-none">
@@ -434,6 +470,7 @@ const generateCertificateFormData = () => {
                                                             v-if="ip.file != null && id === 2"
                                                             @click.prevent="deleteFile(ip.id)"><i
                                                                 class="fa-solid fa-trash-can"></i></a>
+                                                        <p v-if="ip.file === null" class="text-danger" style="font-size: 12px;">No File Yet</p>
                                                     </td>
                                                     <td v-if="id === 1">
                                                         <form action="" class="text-center"
@@ -457,13 +494,16 @@ const generateCertificateFormData = () => {
                                                         </form>
                                                     </td>
                                                     <td v-if="id === 2" class="text-center">
-                                                        <button class="btn btn-sm btn-success"
+                                                        <button class="btn btn-sm btn-success" style="font-size: 12px;"
                                                             @click.prevent="completeInspection(ip.id)"
                                                             :disabled="ip.file === null"><i
                                                                 class="fa-solid fa-check"></i> Done</button>
                                                         <i class="text-danger d-block mt-3" style="font-size: 12px;"
                                                             v-if="ip.file == null">Please upload the checklist form
                                                             first</i>
+                                                            <button class="btn btn-sm btn-info mt-3" style="font-size: 12px;" @click.prevent="updateStatus(ip.id, ip.applicant.name)" v-if="ip.file === null">
+                                                                <i class="fa-solid fa-pen-nib"></i> Edit
+                                                            </button>
                                                     </td>
                                                     <td v-if="id === 3" class="">
                                                         <button class="btn btn-sm btn-info"
