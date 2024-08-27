@@ -45,12 +45,20 @@ onMounted(() => {
 
 const sidebar = () => {
   $(".sidebar-offcanvas").toggleClass("active");
+
 }
 
 const insidebar = () => {
   $(".sidebar-offcanvas").toggleClass("inactive");
   $(".main-panel").toggleClass("inactive");
+  
+  if ($(".sidebar-offcanvas").hasClass("inactive")) {
+    $(".navbar-content").attr("id", "dirty-white");
+  } else {
+    $(".navbar-content").removeAttr("id", "dirty-white");
+  }
 }
+
 
 const editProfile = (name, contactNumber, email) => {
   editProfileForm.name = name
@@ -153,21 +161,20 @@ const updateProfile = () => {
     </div>
   </div>
 
-  <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row shadow-sm">
-    <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-      <div class="d-flex justify-content-between align-items-center">
+  <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row navbar-content">
+    <div class="text-center d-flex align-items-center justify-content-center">
+      <div class="d-flex justify-content-between align-items-center ml-lg-4 ml-2">
         <a class="" href="#"><img src="/images/logo-mini.svg" style="width: 40px;" alt="logo" /></a>
         <span style="margin-left: 8px;" class="font-weight-bold text-primary d-none d-lg-block">BFP MIS</span>
       </div>
 
-      <button class="navbar-toggler navbar-toggler align-self-center d-none d-lg-flex" @click="insidebar" type="button"
+      <button class="navbar-toggler navbar-toggler align-self-center d-none d-lg-flex ml-4" @click="insidebar" type="button"
         data-toggle="minimize">
-        <span class="typcn typcn-th-menu"></span>
+        <iconify-icon icon="icon-park-twotone:menu-fold-one" width="24" height="24" class="text-muted"></iconify-icon>
       </button>
-
     </div>
 
-    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end" style="background: #F5F5F5;">
       <ul class="navbar-nav mr-lg-2">
 
         <li class="nav-item d-none d-lg-flex">
@@ -273,7 +280,7 @@ const updateProfile = () => {
       </ul>
       <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" @click="sidebar"
         data-toggle="offcanvas">
-        <span class="typcn typcn-th-menu"></span>
+        <iconify-icon icon="icon-park-twotone:menu-fold-one" width="24" height="24" class="text-dark mt-1"></iconify-icon>
       </button>
     </div>
   </nav>
@@ -330,5 +337,15 @@ function formatDate(dateString) {
 <style>
 .margin-end {
   margin-right: 10px;
+}
+
+#dirty-white {
+  background: #F5F5F5;
+}
+
+@media (max-width: 991px) {
+  .navbar-content {
+    background: #F5F5F5;
+  }
 }
 </style>

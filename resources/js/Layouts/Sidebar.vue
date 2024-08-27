@@ -33,7 +33,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <nav class="sidebar sidebar-offcanvas shadow-sm" id="sidebar">
+  <nav class="sidebar sidebar-offcanvas shadow-sm bg-white" id="sidebar">
+    <hr class="mx-3">
     <ul class="nav">
       <li class="nav-item">
         <div class="d-flex sidebar-profile">
@@ -46,30 +47,29 @@ onMounted(() => {
             <span class="sidebar-status-indicator"></span>
           </div>
           <div class="sidebar-profile-name">
-            <p class="sidebar-name" style="margin-left: 10px;" v-if="user?.role === 1">
+            <p class="sidebar-name text-dark" style="margin-left: 10px;" v-if="user?.role === 1">
               {{ user?.name }}
             </p>
-            <p class="sidebar-name" style="margin-left: 10px;" v-if="user?.role === 2">
+            <p class="sidebar-name text-dark" style="margin-left: 10px;" v-if="user?.role === 2">
               {{ user?.personnel.name }}
             </p>
-            <p class="sidebar-name" style="margin-left: 10px;" v-if="user?.role === 3">
+            <p class="sidebar-name text-dark" style="margin-left: 10px;" v-if="user?.role === 3">
               {{ user?.applicant.name }}
             </p>
 
-            <p class="sidebar-designation text-white" style="margin-left: 10px;" v-if="user?.role === 1">
+            <p class="sidebar-designation text-dark" style="margin-left: 10px;" v-if="user?.role === 1">
               Administrator
             </p>
 
-            <p class="sidebar-designation text-white" style="margin-left: 10px;" v-if="user?.role === 2">
+            <p class="sidebar-designation text-dark" style="margin-left: 10px;" v-if="user?.role === 2">
               Personnel
             </p>
 
-            <p class="sidebar-designation text-white" style="margin-left: 10px;" v-if="user?.role === 3">
+            <p class="sidebar-designation text-dark" style="margin-left: 10px;" v-if="user?.role === 3">
               Applicant
             </p>
           </div>
         </div>
-        <hr>
         <p class="sidebar-menu-title mb-2">Pages</p>
       </li>
 

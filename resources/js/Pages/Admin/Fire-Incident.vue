@@ -79,10 +79,10 @@ const createFireIncidentReport = () => {
 const editFireIncidentReport = (id, owner, location, fireAlarmLevel, date, time, casualties, fireCause, injuries, structureType, estimatedValueLoss) => {
     editModal.value.show();
     editForm.id = id,
-        editForm.owner = owner;
+    editForm.owner = owner;
     editForm.location = location;
     editForm.fireAlarmLevel = fireAlarmLevel,
-        editForm.date = date;
+    editForm.date = date;
     editForm.time = time;
     editForm.casualties = casualties;
     editForm.fireCause = fireCause;
