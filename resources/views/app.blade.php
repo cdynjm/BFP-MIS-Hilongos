@@ -57,14 +57,8 @@
 
     <!-- container-scroller -->
     <style>
-      .content-wrapper {
-          background: #F5F5F5;
-      }
-      
-      .rounded-md {
-        border-radius: 10px;
-      }
-      </style>
+      .content-wrapper {background: #F5F5F5;} .rounded-md {border-radius: 10px;}
+    </style>
 
      <!--Start of Tawk.to Script-->
     <script type="text/javascript">
