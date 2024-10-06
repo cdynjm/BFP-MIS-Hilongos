@@ -29,7 +29,7 @@ const submit = () => {
             <div class="auth-form-light text-left py-5 px-4 px-sm-5 shadow-lg rounded">
               <div class="brand-logo">
                 <div class="d-flex justify-content-between align-items-center">
-                  <img src="/images/bfp-2.png" style="width: 350px; height: auto;" class="" alt="logo">
+                  <img src="/images/bfp-2.png" style="width: 300px; height: auto;" class="" alt="logo">
                 </div>
               </div>
               <h4 class="font-weight-bold mb-3">Sign In with your credentials to proceed.</h4>

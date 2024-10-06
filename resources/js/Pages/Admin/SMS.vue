@@ -97,11 +97,11 @@ const updateSMSToken = () => {
                                         <input type="text" class="form-control form-control-sm mb-3" :value="sms.url"
                                             readonly>
 
-                                        <label for="">Access Token</label>
+                                        <label for="">Access Token <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="editForm.accessToken">
 
-                                        <label for="">Mobile Identity</label>
+                                        <label for="">Mobile Identity <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="editForm.mobileIdentity">
 

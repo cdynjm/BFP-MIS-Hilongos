@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     public $relation = ['personnel', 'applicant'];
 
@@ -48,10 +49,10 @@ class User extends Authenticatable
     ];
 
     public function personnel() {
-        return $this->hasOne(Personnel::class, 'id', 'personnelID');
+        return $this->hasOne(Personnel::class, 'id', 'personnelID')->withTrashed();
     }
 
     public function applicant() {
-        return $this->hasOne(Applicant::class, 'id', 'applicantID');
+        return $this->hasOne(Applicant::class, 'id', 'applicantID')->withTrashed();
     }
 }

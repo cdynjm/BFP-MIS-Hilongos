@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FireInspection extends Model
 {
-    
+    use HasFactory, SoftDeletes;
+
     public $relation = ['personnel', 'applicant'];
 
     protected $table = 'fire_inspection';
@@ -37,13 +39,14 @@ class FireInspection extends Model
         'status',
         'certType',
         'certStatus',
-        'file'
+        'file',
+        'picture'
     ];
 
     public function personnel() {
-        return $this->hasOne(Personnel::class, 'id', 'personnelID');
+        return $this->hasOne(Personnel::class, 'id', 'personnelID')->withTrashed();
     }
     public function applicant() {
-        return $this->hasOne(Applicant::class, 'id', 'applicantID');
+        return $this->hasOne(Applicant::class, 'id', 'applicantID')->withTrashed();
     }
 }

@@ -20,7 +20,11 @@ const searchForm = useForm({
     result: 0,
 });
 
-const years = Array.from({ length: 2040 - 2023 + 1 }, (_, i) => 2023 + i);
+const today = new Date().toISOString().split('T')[0];
+const currentYear = new Date().getFullYear();
+const startYear = 2020;
+const years = Array.from({ length: currentYear - startYear + 1 }, (_, i) => startYear + i);
+
 searchForm.search = '';
 
 const searchYear = () => {
@@ -206,15 +210,15 @@ const deleteFireIncidentReportData = (id) => {
                                         <div class="row">
                                             <div class="col-md-6">
 
-                                                <label for="" class="mb-1">Owner/s of the Property Affected</label>
+                                                <label for="" class="mb-1">Owner/s of the Property Affected <span class="text-danger">*</span></label>
                                                 <textarea name="" id="" class="form-control mb-3" rows="5"
                                                     v-model="createForm.owner" required></textarea>
 
-                                                <label for="" class="mb-1">Location</label>
+                                                <label for="" class="mb-1">Location <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.location" required>
 
-                                                <label for="" class="mb-1">Highest Fire Alarm Level Raised</label>
+                                                <label for="" class="mb-1">Highest Fire Alarm Level Raised <span class="text-danger">*</span></label>
                                                 <select name="" id="" class="form-control mb-3"
                                                     v-model="createForm.fireAlarmLevel" required>
                                                     <option :value="'1'">First Alarm</option>
@@ -229,34 +233,34 @@ const deleteFireIncidentReportData = (id) => {
                                                     <option :value="'10'">General Alarm</option>
                                                 </select>
 
-                                                <label for="" class="mb-1">Date</label>
-                                                <input type="date" class="form-control form-control-sm mb-3"
+                                                <label for="" class="mb-1">Date <span class="text-danger">*</span></label>
+                                                <input type="date" class="form-control form-control-sm mb-3" :max="today"
                                                     v-model="createForm.date" required>
 
-                                                <label for="" class="mb-1">Time</label>
+                                                <label for="" class="mb-1">Time <span class="text-danger">*</span></label>
                                                 <input type="time" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.time" required>
 
                                             </div>
                                             <div class="col-md-6">
 
-                                                <label for="" class="mb-1">Casualties</label>
+                                                <label for="" class="mb-1">Casualties <span class="text-danger">*</span></label>
                                                 <input type="number" min="0" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.casualties" required>
 
-                                                <label for="" class="mb-1">Inujuries</label>
+                                                <label for="" class="mb-1">Inujuries <span class="text-danger">*</span></label>
                                                 <input type="number" min="0" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.injuries" required>
 
-                                                <label for="" class="mb-1">Cause of Fire</label>
+                                                <label for="" class="mb-1">Cause of Fire <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.fireCause" required>
 
-                                                <label for="" class="mb-1">Type of Structure</label>
+                                                <label for="" class="mb-1">Type of Structure <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.structureType" required>
 
-                                                <label for="" class="mb-1">Estimated Value Loss</label>
+                                                <label for="" class="mb-1">Estimated Value Loss <span class="text-danger">*</span></label>
                                                 <input type="number" min="0" step="0.01"
                                                     class="form-control form-control-sm mb-3"
                                                     v-model="createForm.estimatedValueLoss" required>
@@ -293,15 +297,15 @@ const deleteFireIncidentReportData = (id) => {
                                         <div class="row">
                                             <div class="col-md-6">
 
-                                                <label for="" class="mb-1">Owner</label>
+                                                <label for="" class="mb-1">Owner/s of the Property Affected <span class="text-danger">*</span></label>
                                                 <textarea name="" id="" class="form-control mb-3" rows="5"
                                                     v-model="editForm.owner" required></textarea>
 
-                                                <label for="" class="mb-1">Location</label>
+                                                <label for="" class="mb-1">Location <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.location" required>
 
-                                                <label for="" class="mb-1">Highest Fire Alarm Level Raised</label>
+                                                <label for="" class="mb-1">Highest Fire Alarm Level Raised <span class="text-danger">*</span></label>
                                                 <select name="" id="" class="form-control mb-3"
                                                     v-model="editForm.fireAlarmLevel" required>
                                                     <option :value="'1'">First Alarm</option>
@@ -316,34 +320,34 @@ const deleteFireIncidentReportData = (id) => {
                                                     <option :value="'10'">General Alarm</option>
                                                 </select>
 
-                                                <label for="" class="mb-1">Date</label>
-                                                <input type="date" class="form-control form-control-sm mb-3"
+                                                <label for="" class="mb-1">Date <span class="text-danger">*</span></label>
+                                                <input type="date" class="form-control form-control-sm mb-3" :max="today"
                                                     v-model="editForm.date" required>
 
-                                                <label for="" class="mb-1">Time</label>
+                                                <label for="" class="mb-1">Time <span class="text-danger">*</span></label>
                                                 <input type="time" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.time" required>
 
                                             </div>
                                             <div class="col-md-6">
 
-                                                <label for="" class="mb-1">Casualties</label>
+                                                <label for="" class="mb-1">Casualties <span class="text-danger">*</span></label>
                                                 <input type="number" min="0" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.casualties" required>
 
-                                                <label for="" class="mb-1">Inujuries</label>
+                                                <label for="" class="mb-1">Inujuries <span class="text-danger">*</span></label>
                                                 <input type="number" min="0" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.injuries" required>
 
-                                                <label for="" class="mb-1">Cause of Fire</label>
+                                                <label for="" class="mb-1">Cause of Fire <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.fireCause" required>
 
-                                                <label for="" class="mb-1">Type of Structure</label>
+                                                <label for="" class="mb-1">Type of Structure <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.structureType" required>
 
-                                                <label for="" class="mb-1">Estimated Value Loss</label>
+                                                <label for="" class="mb-1">Estimated Value Loss <span class="text-danger">*</span></label>
                                                 <input type="number" min="0" step="0.01"
                                                     class="form-control form-control-sm mb-3"
                                                     v-model="editForm.estimatedValueLoss" required>

@@ -38,14 +38,24 @@ onMounted(() => {
     <ul class="nav">
       <li class="nav-item">
         <div class="d-flex sidebar-profile">
-          <div class="sidebar-profile-image">
-            <img :src="'/storage/profile/' + user?.applicant.picture" style="width: 40px; height: auto;" alt="image"
-              v-if="user?.role === 3">
-            <img :src="'/storage/profile/' + user?.personnel.picture" style="width: 40px; height: auto;" alt="image"
-              v-if="user?.role === 2">
-            <img src="/images/firefighter.png" style="width: 45px; height: auto;" alt="image" v-if="user?.role === 1">
-            <span class="sidebar-status-indicator"></span>
+          <div class="sidebar-profile-image" style="position: relative; width: 40px; height: 40px; overflow: hidden; border-radius: 0%;">
+
+          <img :src="'/storage/profile/' + user?.applicant.picture" alt="image" v-if="user?.role === 3"
+              style="width: 100%; height: 100%; object-fit: cover;">
+
+          <img :src="'/storage/profile/' + user?.personnel.picture" alt="image" v-if="user?.role === 2"
+              style="width: 100%; height: 100%; object-fit: cover;">
+
+          <img src="/images/firefighter.png" alt="image" v-if="user?.role === 1"
+              style="width: 100%; height: 100%; object-fit: cover;">
+
+          <!-- Adjusted status indicator -->
+          <span class="sidebar-status-indicator" 
+                style="position: absolute; bottom: 0; right: 0; width: 13px; height: 13px; background-color: green; border-radius: 50%; border: 2px solid white;">
+          </span>
+
           </div>
+
           <div class="sidebar-profile-name">
             <p class="sidebar-name text-dark" style="margin-left: 10px;" v-if="user?.role === 1">
               {{ user?.name }}
@@ -97,7 +107,7 @@ onMounted(() => {
         <li :class="['nav-item', isActive('Admin/SMS') ? 'active' : '']">
           <a class="nav-link" @click.prevent="navigateTo('admin.sms-token')" href="#">
             <i class="fa-solid fa-comment-sms menu-icon"></i>
-            <span class="menu-title">SMS API Token</span>
+            <span class="menu-title">SMS Settings</span>
           </a>
         </li>
       </div>

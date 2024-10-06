@@ -14,7 +14,9 @@ defineProps({
     id: Number,
     inspections: Array,
     personnel: Array,
-    today: Date
+    today: Date,
+    municipal: String,
+    barangay: Array
 })
 
 const certificateModal = ref(null);
@@ -68,7 +70,8 @@ const setSchedule = (id) => {
 const uploadForm = useForm({
     id: null,
     name: null,
-    file: null
+    file: null,
+    picture: null,
 });
 
 const completeInspection = (id) => {
@@ -96,6 +99,10 @@ const completeInspection = (id) => {
 
 const handleFileChange = (event) => {
     uploadForm.file = event.target.files[0];
+};
+
+const handlePictureChange = (event) => {
+    uploadForm.picture = event.target.files[0];
 };
 
 const uploadFile = () => {
@@ -240,7 +247,7 @@ const updateStatus = (id, name) => {
 
         <Navbar v-if="id === 1" :page="'Pending'" />
         <Navbar v-if="id === 2" :page="'Scheduled'" />
-        <Navbar v-if="id === 3" :page="'Archives'" />
+        <Navbar v-if="id === 3" :page="'Inspection History'" />
 
         <div class="container-fluid page-body-wrapper">
 
@@ -264,55 +271,61 @@ const updateStatus = (id, name) => {
                                         <div class="row">
                                             <div class="col-md-6">
 
-                                                <label for="">Building Name</label>
+                                                <label for="">Building Name <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.building" required>
 
-                                                <label for="">Owner</label>
+                                                <label for="">Owner <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.owner" required>
 
-                                                <label for="">Address</label>
-                                                <input type="text" class="form-control form-control-sm mb-3"
-                                                    v-model="generateCertificateForm.address" required>
+                                                    <label for="" class="mb-1">Municipal <span class="text-danger text-xs">*</span></label>
+                                                    <input type="text" class="form-control mb-3" :value="municipal.citymunDesc" readonly>
 
+                                                    <label for="" class="mb-1">Barangay <span class="text-danger text-xs">*</span></label>
+                                                    <select name="" id="" class="form-control mb-3" v-model="generateCertificateForm.address" required>
+                                                        <option v-for="(br, index) in barangay" :value="br.brgyDesc">
+                                                            {{ br.brgyDesc }}
+                                                        </option>
+                                                    </select>
+                                              
                                                 <div
                                                     v-if="generateCertificateForm.certType === 2 || generateCertificateForm.certType === 3">
-                                                    <label for="">Description</label>
+                                                    <label for="">Description <span class="text-danger">*</span></label>
                                                     <input type="text" class="form-control form-control-sm mb-3"
                                                         v-model="generateCertificateForm.description" required>
 
-                                                    <label for="">Valid From</label>
-                                                    <input type="date" :min="today"
+                                                    <label for="">Valid From <span class="text-danger">*</span></label>
+                                                    <input type="date"
                                                         class="form-control form-control-sm mb-3"
                                                         v-model="generateCertificateForm.validFrom">
                                                 </div>
 
                                                 <label for="" v-if="generateCertificateForm.certType === 1">FSEC
-                                                    Number</label>
+                                                    Number <span class="text-danger">*</span></label>
                                                 <label for=""
                                                     v-if="generateCertificateForm.certType === 2 || generateCertificateForm.certType === 3">FSIC
-                                                    Number</label>
+                                                    Number <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.fsicfsecNumber" required>
 
-                                                <label for="">Date</label>
-                                                <input type="date" :min="today"
+                                                <label for="">Date <span class="text-danger">*</span></label>
+                                                <input type="date"
                                                     class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.date" required>
 
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="">Amount Paid</label>
+                                                <label for="">Amount Paid <span class="text-danger">*</span></label>
                                                 <input type="number" class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.amountPaid" min="0" step="0.01"
                                                     required>
 
-                                                <label for="">OR Number</label>
+                                                <label for="">OR Number <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.ORNumber" required>
 
-                                                <label for="">Recommended Approval: </label>
+                                                <label for="">Recommended Approval: <span class="text-danger">*</span></label>
                                                 <select name="" id="" class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.recommendedApproval" required>
                                                     <option value="">Select...</option>
@@ -320,7 +333,7 @@ const updateStatus = (id, name) => {
                                                         }}</option>
                                                 </select>
 
-                                                <label for="">Approved By: </label>
+                                                <label for="">Approved By: <span class="text-danger">*</span></label>
                                                 <select name="" id="" class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.approvedBy" required>
                                                     <option value="">Select...</option>
@@ -356,17 +369,23 @@ const updateStatus = (id, name) => {
                                     <div class="row">
                                         <div class="col-md-12 mb-4">
                                             <form action="" @submit.prevent="uploadFile()">
-                                                <label for="">Upload Checklist Form</label>
+                                                <label for="">Upload Checklist Form <span class="text-danger text-xs">*</span></label>
                                                 <input type="file" class="form-control form-control-sm mb-3"
                                                     @change="handleFileChange" accept=".pdf, .jpg, .png, .jpeg"
                                                     required>
+
+                                                <label for="">Upload Picture <span class="text-danger text-xs">*</span></label>
+                                                <input type="file" class="form-control form-control-sm mb-3"
+                                                    @change="handlePictureChange" accept=".pdf, .jpg, .png, .jpeg"
+                                                    required>
+                                                    
                                                 <button class="btn btn-sm btn-info">Upload</button>
                                             </form>
                                         </div>
                                         <div class="col-md-12">
                                             <form action="" @submit.prevent="reschedule()">
                                                 <label class="text-dark text-muted">Reschedule
-                                                    Visit/Inspection</label>
+                                                    Visit/Inspection <span class="text-danger">*</span></label>
                                                 <input type="date" class="form-control form-control-sm mb-3"
                                                     v-model="rescheduleForm.date" :min="today" required>
                                                 <button class="btn btn-sm btn-info">Set</button>
@@ -394,7 +413,7 @@ const updateStatus = (id, name) => {
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h6 class="fw-bold" v-if="id === 1">Pending</h6>
                                         <h6 class="fw-bold" v-if="id === 2">Scheduled</h6>
-                                        <h6 class="fw-bold" v-if="id === 3">Archives</h6>
+                                        <h6 class="fw-bold" v-if="id === 3">Inspection History</h6>
                                     </div>
                                 </div>
 
@@ -405,8 +424,8 @@ const updateStatus = (id, name) => {
                                                 <tr>
                                                     <th style="font-size: 13px;">Information</th>
                                                     <th style="font-size: 13px;">Status</th>
-                                                    <th style="font-size: 13px;" v-if="id === 2 || id === 3">Scanned
-                                                        Checklist</th>
+                                                    <th style="font-size: 13px;" v-if="id === 2 || id === 3">
+                                                        Files</th>
                                                     <th style="font-size: 13px;">Action</th>
                                                 </tr>
                                             </thead>
@@ -416,8 +435,9 @@ const updateStatus = (id, name) => {
                                                     <td>
                                                         <div style="display: flex; align-items: flex-start;">
                                                             <img :src="'/storage/profile/' + ip.applicant.picture"
-                                                                style="width: 70px; height: auto; border-radius: 5px; box-shadow: 2px 5px 10px gray;"
+                                                                style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px; box-shadow: 2px 5px 10px gray;"
                                                                 class="mb-3" alt="">
+
 
                                                             <div style="margin-left: 15px;">
                                                                 <div class="p-1"><span class="text-muted">Owner:</span>
@@ -456,19 +476,28 @@ const updateStatus = (id, name) => {
                                                         <p class="text-success" v-if="ip.status === 3">
                                                         <div>Done</div>
                                                         <div>Inspected On: {{ formatDate(ip.schedule) }}</div>
+                                                        <div class="text-gray">By: {{ ip.personnel.name }}</div>
                                                         </p>
                                                     </td>
                                                     <td v-if="id === 2 || id === 3" class="">
 
 
-                                                        <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null"
-                                                            target="_blank" class="text-decoration-none">
-                                                            <i class="fa-solid fa-file-pdf"></i> Checklist Form
-                                                        </a>
-                                                        <a href="#" class="ml-2 text-danger"
-                                                            v-if="ip.file != null && id === 2"
-                                                            @click.prevent="deleteFile(ip.id)"><i
-                                                                class="fa-solid fa-trash-can"></i></a>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="d-flex flex-column">
+                                                                <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null" target="_blank" class="text-decoration-none mb-2">
+                                                                    <i class="fa-solid fa-file-pdf"></i> Checklist Form
+                                                                </a>
+
+                                                                <a :href="`/storage/files/${ip.picture}`" v-if="ip.file != null" target="_blank" class="text-decoration-none">
+                                                                    <i class="fa-solid fa-images"></i> Picture/Image
+                                                                </a>
+                                                            </div>
+
+                                                            <a href="#" class="ml-2 text-danger" v-if="ip.file != null && id === 2" @click.prevent="deleteFile(ip.id)">
+                                                                <i class="fa-solid fa-trash-can"></i>
+                                                            </a>
+                                                        </div>
+
                                                         <p v-if="ip.file === null" class="text-danger"
                                                             style="font-size: 12px;">No File Yet</p>
                                                     </td>
@@ -497,14 +526,14 @@ const updateStatus = (id, name) => {
                                                         <button class="btn btn-sm btn-success p-1"
                                                             style="font-size: 12px;"
                                                             @click.prevent="completeInspection(ip.id)"
-                                                            :disabled="ip.file === null"><i class="fa-solid fa-check"
+                                                            :disabled="ip.file === null && ip.picture == null"><i class="fa-solid fa-check"
                                                                 style="font-size: 12px;"></i> Done</button>
                                                         <i class="text-danger d-block mt-3" style="font-size: 12px;"
                                                             v-if="ip.file == null">Please upload the checklist form
                                                             first</i>
                                                         <button class="btn btn-sm btn-info mt-3 p-1"
                                                             @click.prevent="updateStatus(ip.id, ip.applicant.name)"
-                                                            v-if="ip.file === null" style="font-size: 12px;">
+                                                            v-if="ip.file === null && ip.picture == null" style="font-size: 12px;">
                                                             <i class="fa-solid fa-pen-fancy"
                                                                 style="font-size: 12px;"></i> Edit
                                                         </button>

@@ -31,10 +31,10 @@ CREATE TABLE `applicant` (
   `id` int NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `contactNumber` varchar(255) DEFAULT NULL,
-  `picture` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `picture` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -60,7 +60,7 @@ CREATE TABLE `failed_jobs` (
 
 CREATE TABLE `fire_incident` (
   `id` int NOT NULL,
-  `owner` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `owner` text CHARACTER SET utf8mb4 ,
   `location` varchar(255) DEFAULT NULL,
   `fireAlarmLevel` int DEFAULT NULL,
   `date` date DEFAULT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE `fire_incident` (
   `estimatedValueLoss` decimal(11,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `fire_incident`
@@ -99,13 +99,13 @@ CREATE TABLE `fire_inspection` (
   `dateFSEC` date DEFAULT NULL,
   `FSICNumber` varchar(255) DEFAULT NULL,
   `dateFSIC` date DEFAULT NULL,
-  `owner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `owner` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `validFrom` date DEFAULT NULL,
   `amountPaid` decimal(11,2) DEFAULT NULL,
-  `ORNumber` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ORNumber` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
   `dateOR` date DEFAULT NULL,
-  `recommendApproval` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `recommendApproval` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
   `recommendPosition` varchar(255) DEFAULT NULL,
   `approved` varchar(255) DEFAULT NULL,
   `approvedPosition` varchar(255) DEFAULT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE `fire_inspection` (
   `file` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -186,7 +186,7 @@ CREATE TABLE `personnel` (
   `picture` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `personnel`
@@ -211,7 +211,7 @@ CREATE TABLE `sms_token_identity` (
   `mobile_identity` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `sms_token_identity`

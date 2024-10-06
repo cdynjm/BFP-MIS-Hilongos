@@ -46,7 +46,7 @@ const cancelInspection = (id) => {
 
         <Navbar v-if="id === 1" :page="'Pending'" />
         <Navbar v-if="id === 2" :page="'Scheduled'" />
-        <Navbar v-if="id === 3" :page="'Archives'" />
+        <Navbar v-if="id === 3" :page="'Inspection History'" />
 
         <div class="container-fluid page-body-wrapper">
 
@@ -65,7 +65,7 @@ const cancelInspection = (id) => {
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h6 class="fw-bold" v-if="id === 1">Pending</h6>
                                         <h6 class="fw-bold" v-if="id === 2">Scheduled</h6>
-                                        <h6 class="fw-bold" v-if="id === 3">Archives</h6>
+                                        <h6 class="fw-bold" v-if="id === 3">Inspection History</h6>
                                     </div>
                                 </div>
 
@@ -114,10 +114,21 @@ const cancelInspection = (id) => {
                                                         </p>
                                                     </td>
                                                     <td v-if="id === 3">
-                                                        <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null"
-                                                            target="_blank" class="nav-link">
-                                                            <i class="fa-solid fa-file-pdf"></i> Checklist Form
-                                                        </a>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="d-flex flex-column">
+                                                                <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null" target="_blank" class="text-decoration-none mb-2">
+                                                                    <i class="fa-solid fa-file-pdf"></i> Checklist Form
+                                                                </a>
+
+                                                                <a :href="`/storage/files/${ip.picture}`" v-if="ip.file != null" target="_blank" class="text-decoration-none">
+                                                                    <i class="fa-solid fa-images"></i> Picture/Image
+                                                                </a>
+                                                            </div>
+
+                                                            <a href="#" class="ml-2 text-danger" v-if="ip.file != null && id === 2" @click.prevent="deleteFile(ip.id)">
+                                                                <i class="fa-solid fa-trash-can"></i>
+                                                            </a>
+                                                        </div>
                                                     </td>
                                                     <td v-if="id === 3">
                                                         <a :href="`/applicant/certificate/${ip.id}`"

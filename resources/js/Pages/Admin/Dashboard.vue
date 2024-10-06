@@ -25,7 +25,10 @@ const searchForm = useForm({
     result: 0,
 });
 
-const years = Array.from({ length: 2040 - 2023 + 1 }, (_, i) => 2023 + i);
+const currentYear = new Date().getFullYear();
+const startYear = 2020;
+const years = Array.from({ length: currentYear - startYear + 1 }, (_, i) => startYear + i);
+
 searchForm.search = '';
 
 const searchYear = () => {
@@ -267,7 +270,7 @@ const fireAlarmChartSeries = ref([
                                     <div class="row">
 
                                         <div class="col-9 text-end">
-                                            <p class="text-muted mb-0 text-truncate">Archives</p>
+                                            <p class="text-muted mb-0 text-truncate">Inspection History</p>
                                             <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
                                                 archive }} <span class="text-muted ml-1"
                                                     style="font-size: 12px; font-weight: normal;"><i

@@ -135,7 +135,7 @@ const createFormData = () => {
                                 <div class="card-body shadow-md">
                                     <div class="row">
                                         <div class="col-9 text-end">
-                                            <p class="text-muted mb-0 text-truncate">Archives</p>
+                                            <p class="text-muted mb-0 text-truncate">Inspection History</p>
                                             <h3 class="text-dark mt-2 mb-0 font-weight-bold" style="font-size: 25px;">{{
                                                 archive }} <span class="text-muted ml-1"
                                                     style="font-size: 12px; font-weight: normal;"><i
@@ -177,10 +177,13 @@ const createFormData = () => {
                                         <div class="col-md-3 text-center mb-4" v-for="(ps, index) in personnel">
 
                                             <center>
-                                                <img :src="'/storage/profile/' + ps.picture"
-                                                    style="width: 60%; height: auto; box-shadow: 2px 5px 10px gray; border: 5px solid darkslategrey"
-                                                    class="rounded-md mb-3">
+                                                <div style="width: 60%; padding-bottom: 60%; position: relative; overflow: hidden; border-radius: 8px; box-shadow: 2px 5px 10px gray; border: 5px solid darkslategrey;" class="mb-4">
+                                                    <img :src="'/storage/profile/' + ps.picture"
+                                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+                                                        class="mb-3">
+                                                </div>
                                             </center>
+
 
                                             <div class="font-weight-bold"><i
                                                     class="fa-solid fa-circle-check text-success mr-1"></i> {{ ps.name

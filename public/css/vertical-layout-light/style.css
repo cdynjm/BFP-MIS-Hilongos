@@ -23252,6 +23252,8 @@ body.avgrund-active {
   transition-duration: 0.45s;
   transition-property: color;
   -webkit-transition-property: color;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .sidebar .nav .nav-item .nav-link i {
@@ -23329,13 +23331,16 @@ body.avgrund-active {
 }
 
 .sidebar .nav .nav-item.active > .nav-link {
-  background: #414147;
+  background: var(--gray-lightest);
   position: relative;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 10px;
 }
 
 .sidebar .nav .nav-item.active > .nav-link .menu-title,
 .sidebar .nav .nav-item.active > .nav-link .menu-arrow {
-  color: #fff;
+  color: gray;
 }
 
 .sidebar .nav .nav-item.active > .nav-link i {

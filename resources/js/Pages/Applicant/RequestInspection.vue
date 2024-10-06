@@ -10,6 +10,8 @@ import { ref, onMounted } from 'vue';
 
 defineProps({
     auth: Array,
+    municipal: String,
+    barangay: Array
 })
 
 const createFSECModal = ref(null);
@@ -188,13 +190,20 @@ const createFSICBusinessFormData = () => {
                                             {{ createFSECForm.error }}
                                         </div>
 
-                                        <label for="" class="mb-1">Name of Building/Structure/Facility</label>
+                                        <label for="" class="mb-1">Name of Building/Structure/Facility <span class="text-danger text-xs">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="createFSECForm.building" required>
 
-                                        <label for="" class="mb-1">Address</label>
-                                        <input type="text" class="form-control form-control-sm mb-3"
-                                            v-model="createFSECForm.address" required>
+                                        <label for="" class="mb-1">Municipal <span class="text-danger text-xs">*</span></label>
+                                        <input type="text" class="form-control mb-3" :value="municipal.citymunDesc" readonly>
+
+                                        <label for="" class="mb-1">Barangay <span class="text-danger text-xs">*</span></label>
+                                        <select name="" id="" class="form-control mb-3" v-model="createFSECForm.address" required>
+                                            
+                                            <option v-for="(br, index) in barangay" :value="br.brgyDesc">
+                                                {{ br.brgyDesc }}
+                                            </option>
+                                        </select>
 
                                     </div>
                                     <div class="modal-footer">
@@ -223,13 +232,21 @@ const createFSICBusinessFormData = () => {
                                             {{ createFSICOccupancyForm.error }}
                                         </div>
 
-                                        <label for="" class="mb-1">Name of Establishment</label>
+                                        <label for="" class="mb-1">Name of Establishment <span class="text-danger text-xs">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="createFSICOccupancyForm.building" required>
 
-                                        <label for="" class="mb-1">Address</label>
-                                        <input type="text" class="form-control form-control-sm mb-3"
-                                            v-model="createFSICOccupancyForm.address" required>
+                                        <label for="" class="mb-1">Municipal <span class="text-danger text-xs">*</span></label>
+                                        <input type="text" class="form-control mb-3" :value="municipal.citymunDesc" readonly>
+
+                                        <label for="" class="mb-1">Barangay <span class="text-danger text-xs">*</span></label>
+                                        <select name="" id="" class="form-control mb-3" v-model="createFSICOccupancyForm.address" required>
+                                            
+                                            <option v-for="(br, index) in barangay" :value="br.brgyDesc">
+                                                {{ br.brgyDesc }}
+                                            </option>
+                                        </select>
+
 
                                     </div>
                                     <div class="modal-footer">
@@ -258,13 +275,21 @@ const createFSICBusinessFormData = () => {
                                             {{ createFSICBusinessForm.error }}
                                         </div>
 
-                                        <label for="" class="mb-1">Name of Establishment</label>
+                                        <label for="" class="mb-1">Name of Establishment <span class="text-danger text-xs">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="createFSICBusinessForm.building" required>
 
-                                        <label for="" class="mb-1">Address</label>
-                                        <input type="text" class="form-control form-control-sm mb-3"
-                                            v-model="createFSICBusinessForm.address" required>
+                                        <label for="" class="mb-1">Municipal <span class="text-danger text-xs">*</span></label>
+                                        <input type="text" class="form-control mb-3" :value="municipal.citymunDesc" readonly>
+
+                                        <label for="" class="mb-1">Barangay <span class="text-danger text-xs">*</span></label>
+                                        <select name="" id="" class="form-control mb-3" v-model="createFSICBusinessForm.address" required>
+                                            
+                                            <option v-for="(br, index) in barangay" :value="br.brgyDesc">
+                                                {{ br.brgyDesc }}
+                                            </option>
+                                        </select>
+
 
                                     </div>
                                     <div class="modal-footer">

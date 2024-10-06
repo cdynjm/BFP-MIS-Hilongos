@@ -43,7 +43,7 @@ const submit = () => {
             <div class="auth-form-light text-left py-5 px-4 px-sm-5 shadow-lg rounded">
               <div class="brand-logo">
                 <div class="d-flex justify-content-between align-items-center">
-                  <img src="/images/bfp-2.png" style="width: 350px; height: auto;" class="" alt="logo">
+                  <img src="/images/bfp-2.png" style="width: 300px; height: auto;" class="" alt="logo">
                 </div>
               </div>
               <h4 class="font-weight-bold mb-3">Create your BFP Applicant Account</h4>
@@ -54,27 +54,27 @@ const submit = () => {
 
               <form class="mb-3" @submit.prevent="submit">
                 <div class="form-group">
-                  <label for="">Full Name</label>
+                  <label for="">Full Name <span class="text-danger text-xs">*</span></label>
                   <input type="text" class="form-control form-control-sm rounded" v-model="form.name" id=""
                     placeholder="Name" required>
                 </div>
                 <div class="form-group">
-                  <label for="">Contact Number</label>
+                  <label for="">Contact Number <span class="text-danger text-xs">*</span></label>
                   <input type="text" class="form-control form-control-sm rounded" v-model="form.contactNumber" id=""
                     placeholder="Contact Number" required>
                 </div>
                 <div class="form-group">
-                  <label for="" class="mb-1">Profile Picture</label>
+                  <label for="" class="mb-1">Profile Picture <span class="text-danger text-xs">*</span></label>
                   <input type="file" class="form-control form-control-sm rounded" @change="createPicture"
                     accept=".jpg, .png, .jpeg" required>
                 </div>
                 <div class="form-group">
-                  <label for="">Email</label>
+                  <label for="">Email <span class="text-danger text-xs">*</span></label>
                   <input type="email" class="form-control form-control-sm rounded" v-model="form.email"
                     id="exampleInputEmail1" placeholder="Email" required>
                 </div>
                 <div class="form-group">
-                  <label for="">Password</label>
+                  <label for="">Password <span class="text-danger text-xs">*</span></label>
                   <input type="password" class="form-control form-control-sm rounded" v-model="form.password"
                     id="exampleInputPassword1" placeholder="Password" required>
                 </div>

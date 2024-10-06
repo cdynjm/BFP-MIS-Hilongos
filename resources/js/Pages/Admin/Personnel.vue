@@ -191,27 +191,27 @@ const deletePersonnelData = (id) => {
                                             {{ createForm.error }}
                                         </div>
 
-                                        <label for="" class="mb-1">Full Name</label>
+                                        <label for="" class="mb-1">Full Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="createForm.name" required>
 
-                                        <label for="" class="mb-1">Position</label>
+                                        <label for="" class="mb-1">Position <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="createForm.position" required>
 
-                                        <label for="" class="mb-1">Contact Number</label>
+                                        <label for="" class="mb-1">Contact Number <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control form-control-sm mb-3"
                                             v-model="createForm.contactNumber" required>
 
-                                        <label for="" class="mb-1">Profile Picture</label>
+                                        <label for="" class="mb-1">Profile Picture <span class="text-danger">*</span></label>
                                         <input type="file" class="form-control form-control-sm mb-3"
                                             @change="createPicture" accept=".jpg, .png, .jpeg" required>
 
-                                        <label for="" class="mb-1">Email</label>
+                                        <label for="" class="mb-1">Email <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control form-control-sm mb-3"
                                             v-model="createForm.email" required>
 
-                                        <label for="" class="mb-1">Password</label>
+                                        <label for="" class="mb-1">Password <span class="text-danger">*</span></label>
                                         <input type="password" class="form-control form-control-sm"
                                             v-model="createForm.password" required>
                                     </div>
@@ -241,27 +241,27 @@ const deletePersonnelData = (id) => {
                                             {{ editForm.error }}
                                         </div>
 
-                                        <label for="" class="mb-1">Full Name</label>
+                                        <label for="" class="mb-1">Full Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="editForm.name" required>
 
-                                        <label for="" class="mb-1">Position</label>
+                                        <label for="" class="mb-1">Position <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm mb-3"
                                             v-model="editForm.position" required>
 
-                                        <label for="" class="mb-1">Contact Number</label>
+                                        <label for="" class="mb-1">Contact Number <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control form-control-sm mb-3"
                                             v-model="editForm.contactNumber" required>
 
-                                        <label for="" class="mb-1">Update Profile Picture</label>
+                                        <label for="" class="mb-1">Update Profile Picture <span class="text-danger">*</span></label>
                                         <input type="file" class="form-control form-control-sm mb-3"
                                             @change="editPicture" accept=".jpg, .png, .jpeg">
 
-                                        <label for="" class="mb-1">Email</label>
+                                        <label for="" class="mb-1">Email <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control form-control-sm mb-3"
                                             v-model="editForm.email" required>
 
-                                        <label for="" class="mb-1">Password</label>
+                                        <label for="" class="mb-1">Change Password</label>
                                         <input type="password" class="form-control form-control-sm"
                                             v-model="editForm.password">
                                     </div>
@@ -304,11 +304,14 @@ const deletePersonnelData = (id) => {
                                                 <tr v-for="(ps, index) in personnel">
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img :src="'/storage/profile/' + ps.picture"
-                                                                style="width: 50px; height: auto; border-radius: 5px"
-                                                                class="mr-3" alt="">
-                                                            <b>{{ ps.name }}</b>
+                                                            <div style="width: 50px; height: 50px; position: relative; overflow: hidden;">
+                                                                <img :src="'/storage/profile/' + ps.picture"
+                                                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+                                                                    alt="">
+                                                            </div>
+                                                            <b class="ml-3">{{ ps.name }}</b>
                                                         </div>
+
                                                     </td>
                                                     <td>
                                                         <p class="ml-4">

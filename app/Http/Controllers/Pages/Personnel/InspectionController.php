@@ -60,13 +60,26 @@ class InspectionController extends Controller
         $filename = \Str::slug($request->name.'-checklist-form-'.$timestamp).'.'.$extension;
         $transferfile = $request->file->storeAs('public/files/', $filename); 
 
-        FireInspection::where('id', $this->aes->decrypt($request->id))->update(['file' => $filename]);
+        $pictureExtension = $request->picture->getClientOriginalExtension();
+        $pictureFilename = \Str::slug($request->name.'-picture-'.$timestamp).'.'.$pictureExtension;
+        $transferfile = $request->picture->storeAs('public/files/', $pictureFilename); 
+
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update([
+            'file' => $filename,
+            'picture' => $pictureFilename
+        ]);
     }
 
     public function deleteForm(Request $request) {
 
         $get = FireInspection::where('id', $this->aes->decrypt($request->id))->first();
+
         File::delete(public_path("storage/files/{$get->file}"));
-        FireInspection::where('id', $this->aes->decrypt($request->id))->update(['file' => null]);
+        File::delete(public_path("storage/files/{$get->picture}"));
+
+        FireInspection::where('id', $this->aes->decrypt($request->id))->update([
+            'file' => null,
+            'picture' => null
+        ]);
     }
 }

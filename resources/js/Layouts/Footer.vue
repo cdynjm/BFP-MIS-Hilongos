@@ -4,8 +4,7 @@
             <div class="col-lg-12">
                 <div class="text-center">
                     <div class="col-12 text-center">
-                        <p class="text-sm text-primary">BFP - Management Information System | © {{ new
-                            Date().getFullYear() }}
+                        <p class="text-sm text-primary">BFP - Management Information System
                         </p>
                         <p class="fw-bolder text-sm">Municipality of Hilongos Leyte</p>
 

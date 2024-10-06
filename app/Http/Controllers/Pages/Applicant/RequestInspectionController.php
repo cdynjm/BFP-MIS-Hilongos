@@ -11,6 +11,8 @@ use App\Http\Controllers\Security\AESCipher;
 
 use App\Models\User;
 use App\Models\FireInspection;
+use App\Models\Municipal;
+use App\Models\Barangay;
 
 class RequestInspectionController extends Controller
 {
@@ -18,8 +20,13 @@ class RequestInspectionController extends Controller
 
     public function requestInspection() {
 
+        $municipal = Municipal::where('id', 979)->first();
+        $barangay = Barangay::where('citymunCode', $municipal->citymunCode)->get();
+
         return Inertia::render('Applicant/RequestInspection', [
-            'auth' => Auth::user()->load(Auth::user()->relation)
+            'auth' => Auth::user()->load(Auth::user()->relation),
+            'municipal' => $municipal,
+            'barangay' => $barangay
         ]);
        
     }
