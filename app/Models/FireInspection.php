@@ -10,7 +10,7 @@ class FireInspection extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public $relation = ['personnel', 'applicant'];
+    public $relation = ['personnel', 'applicant', 'user'];
 
     protected $table = 'fire_inspection';
     
@@ -18,6 +18,7 @@ class FireInspection extends Model
         'applicantID',
         'buildingName',
         'address',
+        'purok',
         'businessName',
         'businessNature',
         'FSECNumber',
@@ -27,6 +28,7 @@ class FireInspection extends Model
         'owner',
         'description',
         'validFrom',
+        'validUntil',
         'amountPaid',
         'ORNumber',
         'dateOR',
@@ -34,6 +36,9 @@ class FireInspection extends Model
         'recommendPosition',
         'approved',
         'approvedPosition',
+        'inspectionOrderNumber',
+        'ditControlNumber',
+        'buildingNumber',
         'schedule',
         'personnelID',
         'status',
@@ -48,5 +53,8 @@ class FireInspection extends Model
     }
     public function applicant() {
         return $this->hasOne(Applicant::class, 'id', 'applicantID')->withTrashed();
+    }
+    public function user() {
+        return $this->hasOne(User::class, 'applicantID', 'applicantID')->withTrashed();
     }
 }

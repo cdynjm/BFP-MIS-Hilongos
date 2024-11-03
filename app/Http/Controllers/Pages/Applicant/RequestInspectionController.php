@@ -37,6 +37,7 @@ class RequestInspectionController extends Controller
             'applicantID' => Auth::user()->applicant->id,
             'buildingName' => $request->building,
             'address' => $request->address,
+            'purok' => $request->purok,
             'status' => 1,
             'certType' => 1
         ]);
@@ -48,6 +49,7 @@ class RequestInspectionController extends Controller
             'applicantID' => Auth::user()->applicant->id,
             'buildingName' => $request->building,
             'address' => $request->address,
+            'purok' => $request->purok,
             'status' => 1,
             'certType' => 2
         ]);
@@ -59,6 +61,7 @@ class RequestInspectionController extends Controller
             'applicantID' => Auth::user()->applicant->id,
             'buildingName' => $request->building,
             'address' => $request->address,
+            'purok' => $request->purok,
             'status' => 1,
             'certType' => 3
         ]);

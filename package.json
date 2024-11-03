@@ -26,6 +26,7 @@
         "datatables.net": "^2.1.4",
         "datatables.net-dt": "^2.1.4",
         "jquery": "^3.7.1",
-        "vue3-apexcharts": "^1.5.3"
+        "vue3-apexcharts": "^1.5.3",
+        "xlsx": "^0.18.5"
     }
 }

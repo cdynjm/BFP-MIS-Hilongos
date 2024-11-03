@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import Footer from '@/Layouts/Guest-Footer.vue';
+import { ref } from 'vue';
 
 const form = useForm({
   email: null,
@@ -16,6 +17,8 @@ const submit = () => {
     },
   });
 };
+
+const showPassword = ref(false);
 
 </script>
 
@@ -44,10 +47,20 @@ const submit = () => {
                   <input type="email" class="form-control form-control-sm rounded" v-model="form.email"
                     id="exampleInputEmail1" placeholder="Username" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group position-relative">
                   <label for="">Password</label>
-                  <input type="password" class="form-control form-control-sm rounded" v-model="form.password"
-                    id="exampleInputPassword1" placeholder="Password" required>
+                  <input :type="showPassword ? 'text' : 'password'" class="form-control form-control-sm rounded"
+                    v-model="form.password" placeholder="Password" required>
+
+                  <iconify-icon icon="ion:eye" v-if="!showPassword" @click="showPassword = !showPassword"
+                    class="eye-icon position-absolute"
+                    style="right: 10px; top: 70%; transform: translateY(-50%); cursor: pointer;">
+                  </iconify-icon>
+
+                  <iconify-icon icon="ion:eye-off-sharp" v-else @click="showPassword = !showPassword"
+                    class="eye-icon position-absolute"
+                    style="right: 10px; top: 70%; transform: translateY(-50%); cursor: pointer;">
+                  </iconify-icon>
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-block btn-primary rounded">SIGN IN</button>
@@ -76,3 +89,10 @@ const submit = () => {
   </div>
 
 </template>
+
+<style scoped>
+.eye-icon {
+  font-size: 1.25rem;
+  color: #6c757d;
+}
+</style>

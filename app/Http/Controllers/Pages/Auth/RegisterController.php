@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
+use Illuminate\Auth\Events\Registered;
 
 use App\Models\User;
 use App\Models\Applicant;
@@ -57,6 +58,8 @@ class RegisterController extends Controller
         ]);
 
         Auth::login($user, true);
+        
+        event(new Registered($user));
         
         return redirect('/applicant/dashboard');
     }

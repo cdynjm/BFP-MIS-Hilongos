@@ -15,14 +15,26 @@ use App\Models\Applicant;
 use App\Models\FireIncident;
 use App\Models\Personnel;
 use App\Models\SMSToken;
+use App\Models\CertInfo;
 
-class SMSController extends Controller
+class SettingsController extends Controller
 {
-    public function SMS() {
+    public function settings() {
         $sms = SMSToken::first();
-        return Inertia::render('Admin/SMS', [
+        $cert = CertInfo::first();
+
+        return Inertia::render('Admin/Settings', [
             'auth' => Auth::user()->load(Auth::user()->relation),
-            'sms' => $sms
+            'sms' => $sms,
+            'cert' => $cert
+        ]);
+    }
+
+    public function updateCertInfo(Request $request) {
+
+        CertInfo::where('id', $request->id)->update([
+            'contactNumber' => $request->contactNumber,
+            'code' => $request->code
         ]);
     }
 

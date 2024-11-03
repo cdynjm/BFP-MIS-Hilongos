@@ -5,8 +5,7 @@ import { Link, useForm } from '@inertiajs/vue3';
 import Navbar from '@/Layouts/Navbar.vue';
 import Sidebar from '@/Layouts/Sidebar.vue';
 import Footer from '@/Layouts/Footer.vue';
-
-
+import * as XLSX from 'xlsx';
 import { ref, onMounted } from 'vue';
 
 const props = defineProps({
@@ -175,6 +174,116 @@ const deleteFireIncidentReportData = (id) => {
     })
 };
 
+const downloadExcel = () => {
+    if (props.fireIncident.length === 0) {
+        SweetAlert.fire({
+            icon: 'info',
+            title: 'No Data',
+            text: 'There is no data to be downloaded.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    const data = [
+        ["Report Title", "BFP FIRE INCIDENTS ANNUAL REPORT"],
+        ["Report Year", props.year],
+        [],
+        ["No.", "Owner", "Location", "Fire Alarm Level", "Date", "Time", "Casualties", "Inujries", "Cause of Fire", "Structure Type", "Estimated Value Loss"],
+    ];
+
+    props.fireIncident.forEach((fireInc, index) => {
+        
+        let fireAlarm;
+
+        if (fireInc.fireAlarmLevel === 1) {
+            fireAlarm = "First Alarm";
+        } else if (fireInc.fireAlarmLevel === 2) {
+            fireAlarm = "Second Alarm";
+        } else if (fireInc.fireAlarmLevel === 3) {
+            fireAlarm = "Third Alarm";
+        } else if (fireInc.fireAlarmLevel === 4) {
+            fireAlarm = "Fourth Alarm";
+        } else if (fireInc.fireAlarmLevel === 5) {
+            fireAlarm = "Fifth Alarm";
+        } else if (fireInc.fireAlarmLevel === 6) {
+            fireAlarm = "Task Force Alpha";
+        } else if (fireInc.fireAlarmLevel === 7) {
+            fireAlarm = "Task Force Bravo";
+        } else if (fireInc.fireAlarmLevel === 8) {
+            fireAlarm = "Task Force Charlie";
+        } else if (fireInc.fireAlarmLevel === 9) {
+            fireAlarm = "Task Force Delta";
+        } else if (fireInc.fireAlarmLevel === 10) {
+            fireAlarm = "General Alarm";
+        } else {
+            fireAlarm = "";
+        }
+
+        data.push([
+            index + 1,
+            fireInc.owner,
+            fireInc.location,
+            fireAlarm,
+            formatFullDate(fireInc.date),
+            formatTime12Hour(fireInc.time),
+            fireInc.casualties,
+            fireInc.injuries,
+            fireInc.fireCause,
+            fireInc.structureType,
+            fireInc.estimatedValueLoss
+        ]);
+    });
+
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+
+    const colWidth = [
+        { wpx: 120 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 100 },
+        { wpx: 100 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        
+    ];
+    worksheet['!cols'] = colWidth;
+
+    const headerRow = 4;
+    for (let col = 0; col < data[headerRow].length; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: headerRow, c: col });
+        if (!worksheet[cellAddress]) {
+            worksheet[cellAddress] = {};
+        }
+
+        worksheet[cellAddress].s = {
+            font: { bold: true },
+            fill: {
+                fgColor: { rgb: "FFCCFF" }
+            }
+        };
+    }
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Fire Incidents - ${props.year} Annual Report.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
 </script>
 
 <template>
@@ -210,15 +319,18 @@ const deleteFireIncidentReportData = (id) => {
                                         <div class="row">
                                             <div class="col-md-6">
 
-                                                <label for="" class="mb-1">Owner/s of the Property Affected <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Owner/s of the Property Affected <span
+                                                        class="text-danger">*</span></label>
                                                 <textarea name="" id="" class="form-control mb-3" rows="5"
                                                     v-model="createForm.owner" required></textarea>
 
-                                                <label for="" class="mb-1">Location <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Location <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.location" required>
 
-                                                <label for="" class="mb-1">Highest Fire Alarm Level Raised <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Highest Fire Alarm Level Raised <span
+                                                        class="text-danger">*</span></label>
                                                 <select name="" id="" class="form-control mb-3"
                                                     v-model="createForm.fireAlarmLevel" required>
                                                     <option :value="'1'">First Alarm</option>
@@ -233,34 +345,41 @@ const deleteFireIncidentReportData = (id) => {
                                                     <option :value="'10'">General Alarm</option>
                                                 </select>
 
-                                                <label for="" class="mb-1">Date <span class="text-danger">*</span></label>
-                                                <input type="date" class="form-control form-control-sm mb-3" :max="today"
-                                                    v-model="createForm.date" required>
+                                                <label for="" class="mb-1">Date <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="date" class="form-control form-control-sm mb-3"
+                                                    :max="today" v-model="createForm.date" required>
 
-                                                <label for="" class="mb-1">Time <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Time <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="time" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.time" required>
 
                                             </div>
                                             <div class="col-md-6">
 
-                                                <label for="" class="mb-1">Casualties <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Casualties <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="number" min="0" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.casualties" required>
 
-                                                <label for="" class="mb-1">Inujuries <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Inujuries <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="number" min="0" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.injuries" required>
 
-                                                <label for="" class="mb-1">Cause of Fire <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Cause of Fire <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.fireCause" required>
 
-                                                <label for="" class="mb-1">Type of Structure <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Type of Structure <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="createForm.structureType" required>
 
-                                                <label for="" class="mb-1">Estimated Value Loss <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Estimated Value Loss <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="number" min="0" step="0.01"
                                                     class="form-control form-control-sm mb-3"
                                                     v-model="createForm.estimatedValueLoss" required>
@@ -297,15 +416,18 @@ const deleteFireIncidentReportData = (id) => {
                                         <div class="row">
                                             <div class="col-md-6">
 
-                                                <label for="" class="mb-1">Owner/s of the Property Affected <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Owner/s of the Property Affected <span
+                                                        class="text-danger">*</span></label>
                                                 <textarea name="" id="" class="form-control mb-3" rows="5"
                                                     v-model="editForm.owner" required></textarea>
 
-                                                <label for="" class="mb-1">Location <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Location <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.location" required>
 
-                                                <label for="" class="mb-1">Highest Fire Alarm Level Raised <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Highest Fire Alarm Level Raised <span
+                                                        class="text-danger">*</span></label>
                                                 <select name="" id="" class="form-control mb-3"
                                                     v-model="editForm.fireAlarmLevel" required>
                                                     <option :value="'1'">First Alarm</option>
@@ -320,34 +442,41 @@ const deleteFireIncidentReportData = (id) => {
                                                     <option :value="'10'">General Alarm</option>
                                                 </select>
 
-                                                <label for="" class="mb-1">Date <span class="text-danger">*</span></label>
-                                                <input type="date" class="form-control form-control-sm mb-3" :max="today"
-                                                    v-model="editForm.date" required>
+                                                <label for="" class="mb-1">Date <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="date" class="form-control form-control-sm mb-3"
+                                                    :max="today" v-model="editForm.date" required>
 
-                                                <label for="" class="mb-1">Time <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Time <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="time" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.time" required>
 
                                             </div>
                                             <div class="col-md-6">
 
-                                                <label for="" class="mb-1">Casualties <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Casualties <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="number" min="0" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.casualties" required>
 
-                                                <label for="" class="mb-1">Inujuries <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Inujuries <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="number" min="0" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.injuries" required>
 
-                                                <label for="" class="mb-1">Cause of Fire <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Cause of Fire <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.fireCause" required>
 
-                                                <label for="" class="mb-1">Type of Structure <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Type of Structure <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="editForm.structureType" required>
 
-                                                <label for="" class="mb-1">Estimated Value Loss <span class="text-danger">*</span></label>
+                                                <label for="" class="mb-1">Estimated Value Loss <span
+                                                        class="text-danger">*</span></label>
                                                 <input type="number" min="0" step="0.01"
                                                     class="form-control form-control-sm mb-3"
                                                     v-model="editForm.estimatedValueLoss" required>
@@ -388,6 +517,13 @@ const deleteFireIncidentReportData = (id) => {
                             </form>
                         </div>
 
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                            <button @click="downloadExcel" style="font-size: 11px; font-weight: normal; padding: 5px 5px 5px;" class="btn btn-success btn-sm d-flex align-items-center">
+                                <iconify-icon icon="iwwa:file-csv" width="20"></iconify-icon> <span>Download Report</span>
+                            </button></div>
+                        </div>
+                        
                         <div class="col-md-12">
                             <div class="card rounded-md">
                                 <div class="card-header">
@@ -516,6 +652,12 @@ var SweetAlert = Swal.mixin({
 
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
+}
+
+function formatFullDate(dateString) {
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', options);
 }

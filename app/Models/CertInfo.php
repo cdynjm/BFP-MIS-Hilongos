@@ -6,21 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Applicant extends Model
+class CertInfo extends Model
 {
     use HasFactory, SoftDeletes;
-    
-    public $relation = ['user'];
 
-    protected $table = 'applicant';
+    protected $table = 'cert_info';
 
     protected $fillable = [
-        'name',
         'contactNumber',
-        'picture'
+        'code'
     ];
-
-    public function user() {
-        return $this->hasOne(User::class, 'applicantID', 'id')->withTrashed();
-    }
 }

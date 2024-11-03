@@ -35,6 +35,7 @@ onMounted(() => {
 const createFSECForm = useForm({
     building: null,
     address: null,
+    purok: null,
     error: null,
     status: null,
 });
@@ -42,6 +43,7 @@ const createFSECForm = useForm({
 const createFSICOccupancyForm = useForm({
     building: null,
     address: null,
+    purok: null,
     error: null,
     status: null,
 });
@@ -49,6 +51,7 @@ const createFSICOccupancyForm = useForm({
 const createFSICBusinessForm = useForm({
     building: null,
     address: null,
+    purok: null,
     error: null,
     status: null,
 });
@@ -205,6 +208,9 @@ const createFSICBusinessFormData = () => {
                                             </option>
                                         </select>
 
+                                        <label for="" class="mb-1">Purok/Street <span class="text-danger text-xs">*</span></label>
+                                        <input type="text" class="form-control mb-3" v-model="createFSECForm.purok" required>
+
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-sm btn-secondary"
@@ -247,6 +253,8 @@ const createFSICBusinessFormData = () => {
                                             </option>
                                         </select>
 
+                                        <label for="" class="mb-1">Purok/Street <span class="text-danger text-xs">*</span></label>
+                                        <input type="text" class="form-control mb-3" v-model="createFSICOccupancyForm.purok" required>
 
                                     </div>
                                     <div class="modal-footer">
@@ -290,6 +298,8 @@ const createFSICBusinessFormData = () => {
                                             </option>
                                         </select>
 
+                                        <label for="" class="mb-1">Purok/Street <span class="text-danger text-xs">*</span></label>
+                                        <input type="text" class="form-control mb-3" v-model="createFSICBusinessForm.purok" required>
 
                                     </div>
                                     <div class="modal-footer">

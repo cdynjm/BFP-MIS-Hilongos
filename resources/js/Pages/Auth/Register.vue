@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import Footer from '@/Layouts/Guest-Footer.vue';
+import { ref } from 'vue';
 
 const form = useForm({
   email: null,
@@ -13,11 +14,55 @@ const form = useForm({
   status: null
 });
 
-const createPicture = (event) => {
-  form.file = event.target.files[0];
+const showPassword = ref(false); // Reactive variable to toggle password visibility
+
+
+
+// Compression function for image
+const compressImage = async (file, { quality = 0.3, type = 'image/jpeg' }) => {
+  const imageBitmap = await createImageBitmap(file);
+  const canvas = document.createElement('canvas');
+  canvas.width = imageBitmap.width;
+  canvas.height = imageBitmap.height;
+  
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(imageBitmap, 0, 0);
+
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, type, quality));
+  return new File([blob], file.name, { type: blob.type });
+};
+// Handle file input change and compress image before setting it to form
+const createPicture = async (event) => {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image')) {
+    const compressedFile = await compressImage(file, { quality: 0.3, type: file.type });
+    form.file = compressedFile;
+  } else {
+    form.file = file; // Assign if it's not an image
+  }
+};
+
+
+const validateForm = () => {
+  const phoneRegex = /^\d{11}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+  if (!phoneRegex.test(form.contactNumber)) {
+    form.error = 'Contact number must be exactly 11 digits.';
+    return false;
+  }
+
+  if (!passwordRegex.test(form.password)) {
+    form.error = 'Password must be at least 8 characters, contain an uppercase letter, a lowercase letter, a number, and a symbol.';
+    return false;
+  }
+
+  return true;
 };
 
 const submit = () => {
+  if (!validateForm()) return;
+
   form.post(route('register.authenticate'), {
     forceFormData: true,
     onFinish: () => {
@@ -30,11 +75,9 @@ const submit = () => {
     },
   });
 };
-
 </script>
 
 <template>
-
   <div class="container-scroller">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
       <div class="content-wrapper d-flex align-items-center auth px-0">
@@ -55,36 +98,42 @@ const submit = () => {
               <form class="mb-3" @submit.prevent="submit">
                 <div class="form-group">
                   <label for="">Full Name <span class="text-danger text-xs">*</span></label>
-                  <input type="text" class="form-control form-control-sm rounded" v-model="form.name" id=""
-                    placeholder="Name" required>
+                  <input type="text" class="form-control form-control-sm rounded" v-model="form.name" placeholder="Name" required>
                 </div>
                 <div class="form-group">
                   <label for="">Contact Number <span class="text-danger text-xs">*</span></label>
-                  <input type="text" class="form-control form-control-sm rounded" v-model="form.contactNumber" id=""
-                    placeholder="Contact Number" required>
+                  <input type="text" class="form-control form-control-sm rounded" v-model="form.contactNumber" placeholder="Contact Number" required>
                 </div>
                 <div class="form-group">
                   <label for="" class="mb-1">Profile Picture <span class="text-danger text-xs">*</span></label>
-                  <input type="file" class="form-control form-control-sm rounded" @change="createPicture"
-                    accept=".jpg, .png, .jpeg" required>
+                  <input type="file" class="form-control form-control-sm rounded" @change="createPicture" accept=".jpg, .png, .jpeg" required>
                 </div>
                 <div class="form-group">
                   <label for="">Email <span class="text-danger text-xs">*</span></label>
-                  <input type="email" class="form-control form-control-sm rounded" v-model="form.email"
-                    id="exampleInputEmail1" placeholder="Email" required>
+                  <input type="email" class="form-control form-control-sm rounded" v-model="form.email" placeholder="Email" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group position-relative">
                   <label for="">Password <span class="text-danger text-xs">*</span></label>
-                  <input type="password" class="form-control form-control-sm rounded" v-model="form.password"
-                    id="exampleInputPassword1" placeholder="Password" required>
+                  <input :type="showPassword ? 'text' : 'password'" class="form-control form-control-sm rounded" v-model="form.password" placeholder="Password" required>
+                  
+                  <iconify-icon 
+                    icon="ion:eye" 
+                    v-if="!showPassword" 
+                    @click="showPassword = !showPassword" 
+                    class="eye-icon position-absolute" 
+                    style="right: 10px; top: 70%; transform: translateY(-50%); cursor: pointer;">
+                  </iconify-icon>
+
+                  <iconify-icon 
+                    icon="ion:eye-off-sharp" 
+                    v-else 
+                    @click="showPassword = !showPassword" 
+                    class="eye-icon position-absolute" 
+                    style="right: 10px; top: 70%; transform: translateY(-50%); cursor: pointer;">
+                  </iconify-icon>
                 </div>
                 <div class="mt-3">
-                  <button class="btn btn-block btn-primary rounded">SIGN UP</button>
-                </div>
-                <div class="my-2 d-flex justify-content-between align-items-center">
-                </div>
-                <div class="mb-2">
-
+                  <button class="btn btn-block btn-primary rounded" :disabled="form.processing">SIGN UP</button>
                 </div>
                 <div class="text-center mt-4 font-weight-light">
                   Already have an account?
@@ -97,9 +146,13 @@ const submit = () => {
           </div>
         </div>
       </div>
-      <!-- content-wrapper ends -->
     </div>
-    <!-- page-body-wrapper ends -->
   </div>
-
 </template>
+
+<style scoped>
+.eye-icon {
+  font-size: 1.25rem;
+  color: #6c757d;
+}
+</style>

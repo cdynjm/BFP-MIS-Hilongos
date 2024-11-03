@@ -68,11 +68,56 @@ const editProfile = (name, contactNumber, email) => {
   editProfileModal.value.show();
 };
 
-const editPicture = (event) => {
-  editProfileForm.file = event.target.files[0];
+// Compression function for image
+const compressImage = async (file, { quality = 0.3, type = 'image/jpeg' }) => {
+  const imageBitmap = await createImageBitmap(file);
+  const canvas = document.createElement('canvas');
+  canvas.width = imageBitmap.width;
+  canvas.height = imageBitmap.height;
+  
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(imageBitmap, 0, 0);
+
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, type, quality));
+  return new File([blob], file.name, { type: blob.type });
 };
 
+const editPicture = async (event) => {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image')) {
+    const compressedFile = await compressImage(file, { quality: 0.3, type: file.type });
+    editProfileForm.file = compressedFile;
+  } else {
+    editProfileForm.file = file; // Assign if it's not an image
+  }
+};
+
+
+
+const editProfileValidateForm = () => {
+  const editProfilePhoneRegex = /^\d{11}$/;
+  const editProfilePasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+
+  if(user.value.role === 2 || user.value.role === 3) {
+    if (!editProfilePhoneRegex.test(editProfileForm.contactNumber)) {
+      editProfileForm.error = 'Contact number must be exactly 11 digits.';
+      return false;
+    }
+  }
+
+  if (!editProfilePasswordRegex.test(editProfileForm.password) && editProfileForm.password !== '') {
+    editProfileForm.error = 'Password must be at least 8 characters, contain an uppercase letter, a lowercase letter, a number, and a symbol.';
+    return false;
+  }
+
+  return true;
+};
+
+
+const showPassword = ref(false);
+
 const updateProfile = () => {
+  if (!editProfileValidateForm()) return;
   SweetAlert.fire({
     position: 'center',
     icon: 'info',
@@ -139,15 +184,34 @@ const updateProfile = () => {
 
                   <label for="" class="mb-1">Update Profile Picture</label>
                   <input type="file" class="form-control form-control-sm mb-3" @change="editPicture"
-                    accept=".jpg, .png, .jpeg">
+                    accept=".jpg">
 
                 </div>
 
                 <label for="">Email</label>
                 <input type="text" class="form-control form-control-sm mb-3" v-model="editProfileForm.email" required>
 
-                <label for="">Change Password</label>
-                <input type="password" class="form-control form-control-sm mb-3" v-model="editProfileForm.password">
+                <div class="form-group position-relative">
+                  <label for="" class="mb-1">Change Password <span class="text-danger">*</span></label>
+                  <input :type="showPassword ? 'text' : 'password'" class="form-control form-control-sm"
+                      v-model="editProfileForm.password">
+
+                      <iconify-icon 
+                          icon="ion:eye" 
+                          v-if="!showPassword" 
+                          @click="showPassword = !showPassword" 
+                          class="eye-icon position-absolute" 
+                          style="right: 10px; top: 70%; transform: translateY(-50%); cursor: pointer;">
+                      </iconify-icon>
+
+                      <iconify-icon 
+                          icon="ion:eye-off-sharp" 
+                          v-else 
+                          @click="showPassword = !showPassword" 
+                          class="eye-icon position-absolute" 
+                          style="right: 10px; top: 70%; transform: translateY(-50%); cursor: pointer;">
+                      </iconify-icon>
+                </div>
 
               </div>
             </div>
@@ -164,7 +228,7 @@ const updateProfile = () => {
   <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row navbar-content">
     <div class="text-center d-flex align-items-center justify-content-center">
       <div class="d-flex justify-content-between align-items-center ml-lg-4 ml-2">
-        <a class="" href="#"><img src="/images/logo-mini.svg" style="width: 40px;" alt="logo" /></a>
+        <a class="" href="#"><img src="/images/bfp.png" style="width: 40px;" alt="logo" class="mt-1" /></a>
         <span style="margin-left: 8px;" class="font-weight-bold text-primary d-none d-lg-block">BFP MIS</span>
       </div>
 
@@ -347,5 +411,12 @@ function formatDate(dateString) {
   .navbar-content {
     background: #F5F5F5;
   }
+}
+</style>
+
+<style scoped>
+.eye-icon {
+  font-size: 1.25rem;
+  color: #6c757d;
 }
 </style>

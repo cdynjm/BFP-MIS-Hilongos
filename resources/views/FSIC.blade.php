@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/images/bfp.png" />
     <title>Fire Safety Inspection Certificate</title>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -176,7 +178,7 @@
         .footer {
             text-align: center;
             font-size: 12px;
-            margin-top: 30px;
+            margin-top: 20px;
             margin-bottom: 10px;
         }
 
@@ -224,10 +226,80 @@
         .page-break {
             page-break-after: always;
         }
+        /* Hide the print button when printing */
+        @media print {
+            .buttons {
+                display: none;
+            }
+        }
+        /* Optional styling for your button */
+        #content {
+            margin-bottom: 20px;
+        }
+
+        .printButton {
+            padding: 5px 15px;
+            background-color: rgb(26, 50, 127);
+            color: white;
+            border-radius: 10px;
+            margin-right: 5px;
+            margin-top: 5px;
+            margin-left: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 2px 5px 5px rgb(180, 177, 177);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .display {
+            display: flex
+        }
+
     </style>
 </head>
 
 <body>
+
+    <div>
+        <div class="buttons">
+            <div class="display">
+                @if(Auth::user()->role == 1)
+                <a class="printButton" href="/admin/inspections/gWu9XD9Y4Jz_EvZ3maYa-x51QE-B7i_AukRjZ5SLmNF3Mp5WPkSWy4FYuWWwK_Kz0tun-PPIdoT8pfYmzDkgg26-Y1hbF17aNAUDj8LRchCGRYg6ANIVIYwNirX_nE8kAh4FYGM4sJFy1hqjQArJdA:ISlAKCMqZiYlXjEyMzQ1Ng">
+                    <iconify-icon icon="icon-park-twotone:back" width="20"></iconify-icon> 
+                    <small style="margin-left: 5px">Back</small>
+                </a>
+                @endif
+    
+                @if(Auth::user()->role == 2)
+                <a class="printButton" href="/personnel/inspections/gWu9XD9Y4Jz_EvZ3maYa-x51QE-B7i_AukRjZ5SLmNF3Mp5WPkSWy4FYuWWwK_Kz0tun-PPIdoT8pfYmzDkgg26-Y1hbF17aNAUDj8LRchCGRYg6ANIVIYwNirX_nE8kAh4FYGM4sJFy1hqjQArJdA:ISlAKCMqZiYlXjEyMzQ1Ng">
+                    <iconify-icon icon="icon-park-twotone:back" width="20"></iconify-icon> 
+                    <small style="margin-left: 5px">Back</small>
+                </a>
+                @endif
+    
+                @if(Auth::user()->role == 3)
+                <a class="printButton" href="/applicant/inspections/gWu9XD9Y4Jz_EvZ3maYa-x51QE-B7i_AukRjZ5SLmNF3Mp5WPkSWy4FYuWWwK_Kz0tun-PPIdoT8pfYmzDkgg26-Y1hbF17aNAUDj8LRchCGRYg6ANIVIYwNirX_nE8kAh4FYGM4sJFy1hqjQArJdA:ISlAKCMqZiYlXjEyMzQ1Ng">
+                    <iconify-icon icon="icon-park-twotone:back" width="20"></iconify-icon> 
+                    <small style="margin-left: 5px">Back</small>
+                </a>
+                @endif
+    
+                <button class="printButton" onclick="printPage()">
+                    <iconify-icon icon="ic:twotone-print" width="20"></iconify-icon> 
+                    <small style="margin-left: 5px">Print</small>
+                </button>
+            </div>
+        </div>
+
+        <script>
+            function printPage() {
+              window.print();
+            }
+          </script>
+    </div>
+
     @php
         $copy = [];
         $copy[0] = 'BFP COPY';
@@ -254,7 +326,7 @@
                             <h3 style="font-weight: bold; font-size: 16px;">Province of Leyte</h3>
                             <h3>Hilongos Fire Station</h3>
                             <h4>Capt. Vilbar St., Hilongos, Leyte</h4>
-                            <h4>Mobile Number: 09263678055</h4>
+                            <h4>Mobile Number: {{ $cert->contactNumber }}</h4>
                         </div>
 
                         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -333,7 +405,7 @@
 
                                     <span class="blank-field" style="width: 50%;"></span> valid from </span><span
                                     class="blank-field"
-                                    style="width: 31%; margin-left: 30px;">{{ date('d-M-Y', strtotime($fi->validFrom)) }}</span>
+                                    style="width: 31%; margin-left: 30px;"><strong>{{ date('d-M-Y', strtotime($fi->validFrom)) }}</strong>, valid until <strong>{{ date('d-M-Y', strtotime($fi->validUntil)) }}</strong></span>
                             </p>
                         </div>
 
@@ -397,7 +469,7 @@
                     </div>
                 </div>
 
-                <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">BFP-QSF-FSED-005 Rev. 03 (03.03.20)
+                <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">{{ $cert->code }}
                 </div>
             </div>
         @endfor
@@ -419,7 +491,7 @@
                         <h3 style="font-weight: bold; font-size: 16px;">Province of Leyte</h3>
                         <h3>Hilongos Fire Station</h3>
                         <h4>Capt. Vilbar St., Hilongos, Leyte</h4>
-                        <h4>Mobile Number: 09263678055</h4>
+                        <h4>Mobile Number: {{ $cert->contactNumber }}</h4>
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -496,8 +568,8 @@
 
                                 <span class="blank-field" style="width: 50%;"></span> valid from </span><span
                                 class="blank-field"
-                                style="width: 31%; margin-left: 30px;">{{ date('d-M-Y', strtotime($fi->validFrom)) }}</span>
-                        </p>
+                                style="width: 31%; margin-left: 30px;"><strong>{{ date('d-M-Y', strtotime($fi->validFrom)) }}</strong>, valid until <strong>{{ date('d-M-Y', strtotime($fi->validUntil)) }}</strong></span>
+                            </p>
                     </div>
 
                     <div class="content">
@@ -557,7 +629,7 @@
                 </div>
             </div>
 
-            <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">BFP-QSF-FSED-005 Rev. 03 (03.03.20)
+            <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">{{ $cert->code }}
             </div>
         </div>
     @endif

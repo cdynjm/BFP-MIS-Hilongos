@@ -5,6 +5,8 @@ use App\Http\Controllers\Pages\Auth\LoginController;
 use App\Http\Controllers\Pages\Auth\RegisterController;
 use App\Http\Controllers\Pages\Auth\PasswordResetController;
 use App\Http\Controllers\Layouts\NavbarController;
+use App\Http\Controllers\Pages\Auth\VerifyEmailController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +17,9 @@ use App\Http\Controllers\Layouts\NavbarController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/storage', function () {
+    Artisan::call('storage:link');
+});
 
 Route::group(['middleware' => 'guest'], function () {
 	Route::get('/', [LoginController::class, 'login'])->name('login');
@@ -35,6 +40,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/notification', [NavbarController::class, 'notification'])->name('notification');
     Route::post('/update-profile', [NavbarController::class, 'updateProfile'])->name('update-profile');
     Route::get('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+    Route::get('/email/verify', [VerifyEmailController::class, 'notVerified'])->name('verification.notice');
 });
+
+Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])->middleware('signed')->name('verification.verify');
 
 ?>

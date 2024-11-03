@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
+use Illuminate\Auth\Events\Registered;
 
 use App\Models\User;
 use App\Models\Personnel;
@@ -64,12 +65,14 @@ class PersonnelController extends Controller
             'picture' => $filename
          ]);
 
-        User::create([
+        $user = User::create([
             'personnelID' => $personnel->id,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 2
         ]);
+
+        event(new Registered($user));
 
     }
 

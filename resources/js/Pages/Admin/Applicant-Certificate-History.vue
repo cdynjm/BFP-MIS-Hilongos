@@ -11,42 +11,20 @@ import { ref, onMounted } from 'vue';
 
 defineProps({
     auth: Array,
-    id: Number,
     inspections: Array
 })
 
 onMounted(() => {
-
     $('#inspection-table').DataTable();
 
 });
-
-const cancelInspection = (id) => {
-    const deleteForm = useForm({ id: id });
-    SweetAlert.fire({
-        icon: 'warning',
-        title: 'Are you sure?',
-        text: "This will cancel and remove your inspection request permanently.",
-        showCancelButton: true,
-        confirmButtonColor: '#160e45',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Cancel it!'
-    }).then((result) => {
-        if (result.value) {
-            deleteForm.delete(route('applicant.delete-inspection'));
-            SweetAlert.close();
-        }
-    })
-};
 
 </script>
 
 <template>
     <div class="container-scroller">
 
-        <Navbar v-if="id === 1" :page="'Pending'" />
-        <Navbar v-if="id === 2" :page="'Scheduled'" />
-        <Navbar v-if="id === 3" :page="'Inspection History'" />
+        <Navbar :page="'Applicant History'" />
 
         <div class="container-fluid page-body-wrapper">
 
@@ -63,9 +41,7 @@ const cancelInspection = (id) => {
                             <div class="card rounded-md">
                                 <div class="card-header">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <h6 class="fw-bold" v-if="id === 1">Pending</h6>
-                                        <h6 class="fw-bold" v-if="id === 2">Scheduled</h6>
-                                        <h6 class="fw-bold" v-if="id === 3">Inspection History</h6>
+                                        <h6 class="fw-bold">Inspection History</h6>
                                     </div>
                                 </div>
 
@@ -74,29 +50,45 @@ const cancelInspection = (id) => {
                                         <table class="table text-nowrap" id="inspection-table">
                                             <thead>
                                                 <tr>
-
                                                     <th style="font-size: 13px;">Information</th>
                                                     <th style="font-size: 13px;">Status</th>
-                                                    <th style="font-size: 13px;" v-if="id === 3">Scanned Checklist</th>
-                                                    <th style="font-size: 13px;" v-if="id === 3">Certificate</th>
-                                                    <th style="font-size: 13px;" v-if="id === 1">Action</th>
+                                                    <th style="font-size: 13px;">
+                                                        Files</th>
+                                                    <th style="font-size: 13px;">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr v-for="(ip, index) in inspections">
 
                                                     <td>
+                                                        <div style="display: flex; align-items: flex-start;">
+                                                            <img :src="'/storage/profile/' + ip.applicant.picture"
+                                                                style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px; box-shadow: 2px 5px 10px gray;"
+                                                                class="mb-3" alt="">
+
+
+                                                            <div style="margin-left: 15px;">
+                                                                <div class="p-1"><span class="text-muted">Owner:</span>
+                                                                    {{ ip.applicant.name }}</div>
+                                                                <div class="p-1"><span class="text-muted">Phone:</span>
+                                                                    {{ ip.applicant.contactNumber }}</div>
+                                                                <div class="p-1"><span
+                                                                        class="text-muted">Address:</span> {{ ip.purok }}, {{ ip.address
+                                                                    }}</div>
+                                                            </div>
+                                                        </div>
+
                                                         <div class="p-1"><span class="text-muted">Building Name:</span>
                                                             {{ ip.buildingName }}</div>
-                                                        <div class="p-1"><span class="text-muted">Address:</span> {{ ip.purok }}, {{
-                                                            ip.address }}</div>
-                                                        <p v-if="ip.certType === 1" class="font-weight-bold">Fire Safety
-                                                            Evaluation Clearance</p>
-                                                        <p v-if="ip.certType === 2" class="font-weight-bold">Fire Safety
-                                                            Inspection Certificate (Occupancy)</p>
-                                                        <p v-if="ip.certType === 3" class="font-weight-bold">Fire Safety
-                                                            Inspection Certificate (Business)</p>
+
+                                                        <p v-if="ip.certType === 1" class="font-weight-bold ml-1">Fire
+                                                            Safety Evaluation Clearance</p>
+                                                        <p v-if="ip.certType === 2" class="font-weight-bold ml-1">Fire
+                                                            Safety Inspection Certificate (Occupancy)</p>
+                                                        <p v-if="ip.certType === 3" class="font-weight-bold ml-1">Fire
+                                                            Safety Inspection Certificate (Business)</p>
                                                     </td>
+
 
                                                     <td>
                                                         <span class="text-danger" v-if="ip.status === 1">Pending</span>
@@ -107,13 +99,15 @@ const cancelInspection = (id) => {
                                                             <div>
                                                                 Personnel: {{ ip.personnel.name }}
                                                             </div>
+
                                                         </span>
                                                         <p class="text-success" v-if="ip.status === 3">
                                                         <div>Done</div>
                                                         <div>Inspected On: {{ formatDate(ip.schedule) }}</div>
+                                                        <div class="text-gray">By: {{ ip.personnel.name }}</div>
                                                         </p>
                                                     </td>
-                                                    <td v-if="id === 3">
+                                                    <td class="">
                                                         <div class="d-flex align-items-center">
                                                             <div class="d-flex flex-column">
                                                                 <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null"  class="text-decoration-none mb-2">
@@ -124,14 +118,13 @@ const cancelInspection = (id) => {
                                                                     <i class="fa-solid fa-images"></i> Picture/Image
                                                                 </a>
                                                             </div>
-
-                                                            <a href="#" class="ml-2 text-danger" v-if="ip.file != null && id === 2" @click.prevent="deleteFile(ip.id)">
-                                                                <i class="fa-solid fa-trash-can"></i>
-                                                            </a>
                                                         </div>
+
+                                                        <p v-if="ip.file === null" class="text-danger"
+                                                            style="font-size: 12px;">No File Yet</p>
                                                     </td>
-                                                    <td v-if="id === 3">
-                                                        <a :href="`/applicant/certificate/${ip.id}`"
+                                                    <td class="">
+                                                        <a :href="`/admin/certificate/${ip.id}`"
                                                             v-if="ip.certStatus != null" 
                                                             class="nav-link">
                                                             <i class="fa-solid fa-file-pdf"></i>
@@ -141,12 +134,6 @@ const cancelInspection = (id) => {
                                                             <span v-if="ip.certType === 3"> FSIC Certificate
                                                                 (Business)</span>
                                                         </a>
-                                                    </td>
-                                                    <td v-if="id === 1">
-                                                        <button class="btn btn-sm btn-primary shadow-lg"
-                                                            @click.prevent="cancelInspection(ip.id)">
-                                                            Cancel
-                                                        </button>
                                                     </td>
                                                 </tr>
                                             </tbody>

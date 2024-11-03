@@ -19,21 +19,25 @@ use App\Http\Controllers\Pages\Applicant\RequestInspectionController;
 
 Route::group(['middleware' => 'auth'], function () {
 
-	Route::group(['middleware' => 'applicant'], function () {
-		Route::group(['prefix' => 'applicant'], function () {
+    Route::group(['middleware' => 'verified'], function () {
 
-			Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('applicant.dashboard');
-            Route::post('/dashboard', [DashboardController::class, 'createRequestInspection'])->name('applicant.create-request-inspection');
+        Route::group(['middleware' => 'applicant'], function () {
+            Route::group(['prefix' => 'applicant'], function () {
 
-            Route::get('/inspections/{id}', [InspectionController::class, 'inspections'])->name('applicant.inspections');
-            Route::delete('/inspections', [InspectionController::class, 'deleteInspection'])->name('applicant.delete-inspection');
+                Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('applicant.dashboard');
+                Route::post('/dashboard', [DashboardController::class, 'createRequestInspection'])->name('applicant.create-request-inspection');
 
-            Route::get('/request-inspection', [RequestInspectionController::class, 'requestInspection'])->name('applicant.request-inspection');
-            Route::post('/fsec', [RequestInspectionController::class, 'createFSEC'])->name('applicant.create-fsec');
-            Route::post('/fsic-occupancy', [RequestInspectionController::class, 'createFSICOccupancy'])->name('applicant.create-fsic-occupancy');
-            Route::post('/fsic-business', [RequestInspectionController::class, 'createFSICBusiness'])->name('applicant.create-fsic-business');
+                Route::get('/inspections/{id}', [InspectionController::class, 'inspections'])->name('applicant.inspections');
+                Route::delete('/inspections', [InspectionController::class, 'deleteInspection'])->name('applicant.delete-inspection');
 
-            Route::get('/certificate/{id}', [InspectionController::class, 'certificate']);
+                Route::get('/request-inspection', [RequestInspectionController::class, 'requestInspection'])->name('applicant.request-inspection');
+                Route::post('/fsec', [RequestInspectionController::class, 'createFSEC'])->name('applicant.create-fsec');
+                Route::post('/fsic-occupancy', [RequestInspectionController::class, 'createFSICOccupancy'])->name('applicant.create-fsic-occupancy');
+                Route::post('/fsic-business', [RequestInspectionController::class, 'createFSICBusiness'])->name('applicant.create-fsic-business');
+
+                Route::get('/certificate/{id}', [InspectionController::class, 'certificate']);
+            });
         });
-	});
+        
+    });
 });

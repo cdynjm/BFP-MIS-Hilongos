@@ -39,7 +39,7 @@
    <!-- DataTables JS -->
    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-   
+   <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js" integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     @routes
@@ -59,22 +59,6 @@
     <style>
       .content-wrapper {background: #F5F5F5;} .rounded-md {border-radius: 10px;}
     </style>
-
-     <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-      var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-      (function(){
-      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-      s1.async=true;
-      s1.src='https://embed.tawk.to/66cd90dc50c10f7a00a0d5e1/1i69fro0s';
-      s1.charset='UTF-8';
-      s1.setAttribute('crossorigin','*');
-      s0.parentNode.insertBefore(s1,s0);
-      })();
-    </script>
-      <!--End of Tawk.to Script-->
-
-
 </body>
 
 </html>

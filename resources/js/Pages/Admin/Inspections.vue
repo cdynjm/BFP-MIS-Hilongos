@@ -5,13 +5,13 @@ import { Link, useForm } from '@inertiajs/vue3';
 import Navbar from '@/Layouts/Navbar.vue';
 import Sidebar from '@/Layouts/Sidebar.vue';
 import Footer from '@/Layouts/Footer.vue';
-
-
+import * as XLSX from 'xlsx';
 import { ref, onMounted } from 'vue';
 
-defineProps({
+const props = defineProps({
     auth: Array,
     id: Number,
+    encryptedID: String,
     inspections: Array,
     personnel: Array,
     today: Date,
@@ -35,6 +35,30 @@ onMounted(() => {
     $('#inspection-table').DataTable();
 
 });
+
+const searchForm = useForm({
+    searchYear: null,
+    searchMonth: null,
+    result: 0,
+});
+
+const currentYear = new Date().getFullYear();
+const startYear = 2020;
+const years = Array.from({ length: currentYear - startYear + 1 }, (_, i) => startYear + i);
+
+// Array of month names
+const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+
+// Initialize selected year and month to empty values
+searchForm.searchYear = '';
+searchForm.searchMonth = '';
+
+const searchYearMonth = () => {
+    searchForm.get(route('admin.search-year-month', {id: props.encryptedID}));
+};
 
 const createForm = useForm({
     id: null,
@@ -97,12 +121,58 @@ const completeInspection = (id) => {
     })
 };
 
-const handleFileChange = (event) => {
-    uploadForm.file = event.target.files[0];
+// Compression function for image
+const compressImage = async (file, { quality = 0.3, type = 'image/jpeg' }) => {
+  const imageBitmap = await createImageBitmap(file);
+  const canvas = document.createElement('canvas');
+  canvas.width = imageBitmap.width;
+  canvas.height = imageBitmap.height;
+  
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(imageBitmap, 0, 0);
+
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, type, quality));
+  return new File([blob], file.name, { type: blob.type });
 };
 
-const handlePictureChange = (event) => {
-    uploadForm.picture = event.target.files[0];
+const handleFileChange = async (event) => {
+  const file = event.target.files[0];
+  
+  if (!file) return; // Exit if no file is selected
+
+  const maxSizeInMB = 2;
+  const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+  // Check if the file is an image
+  if (file.type.startsWith('image')) {
+    const compressedFile = await compressImage(file, { quality: 0.3, type: file.type });
+    uploadForm.file = compressedFile;
+  } else {
+    // For non-image files, check file size
+    if (file.size > maxSizeInBytes) {
+      event.target.value = ''; // Clear the file input
+      
+      // Show SweetAlert notification
+      SweetAlert.fire({
+        icon: 'error',
+        title: 'File too large',
+        text: `Please select a file smaller than ${maxSizeInMB}MB.`,
+        confirmButtonText: 'OK',
+      });
+    } else {
+      uploadForm.file = file; // Assign if it's within size limits
+    }
+  }
+};
+
+const handlePictureChange = async (event) => {
+    const file = event.target.files[0];
+  if (file && file.type.startsWith('image')) {
+    const compressedFile = await compressImage(file, { quality: 0.3, type: file.type });
+    uploadForm.picture = compressedFile;
+  } else {
+    uploadForm.picture = file; // Assign if it's not an image
+  }
 };
 
 const uploadFile = () => {
@@ -191,13 +261,17 @@ const generateCertificateForm = useForm({
     owner: null,
     description: null,
     validFrom: null,
+    validUntil: null,
     address: null,
     fsicfsecNumber: null,
     date: null,
     amountPaid: null,
     ORNumber: null,
     recommendedApproval: null,
-    approvedBy: null
+    approvedBy: null,
+    inspectionOrderNumber: null,
+    ditControlNumber: null,
+    buildingNumber: null
 });
 
 const generateCertificate = (id, name, address, building, certType) => {
@@ -239,6 +313,123 @@ const updateStatus = (id, name) => {
     rescheduleForm.id = id;
     updateModal.value.show()
 }
+
+const downloadExcel = () => {
+    if (props.inspections.length === 0) {
+        SweetAlert.fire({
+            icon: 'info',
+            title: 'No Data',
+            text: 'There is no data to be downloaded.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    const data = [
+        ["Report Title", "BFP FIRE INSPECTION/EVALUATION MONTHLY REPORT"],
+        ["Report Month/Year", formatMonthYear(props.today)],
+        [],
+        ["No.", "Establishment/Building Name", "Owner", "Municipal", "Barangay", "Description", "FSIC/FSEC Number", "Date FSEC/FSIC", "Valid Until", "Amount Paid", "OR Number", "Date of OR", "Recommended Approval", "Approved By", "Inspector", "Inspection Order Number", "Date of Inspection", "DIT Control Number", "Business/Building Number", "Owner Contact Number", "Owner Email", "Cert Type"],
+    ];
+
+    props.inspections.forEach((inspection, index) => {
+        let certTypeName;
+        if (inspection.certType === 1) {
+            certTypeName = "Fire Safety Evaluation Clearance";
+        } else if (inspection.certType === 2) {
+            certTypeName = "Fire Safety Inspection Certificate (Occupancy)";
+        } else if (inspection.certType === 3) {
+            certTypeName = "Fire Safety Inspection Certificate (Business)";
+        } else {
+            certTypeName = "Unknown Certificate Type";
+        }
+
+        data.push([
+            index + 1,
+            inspection.buildingName,
+            inspection.applicant.name,
+            'Hilongos',
+            inspection.address,
+            inspection.description,
+            inspection.certType === 1 ? inspection.FSECNumber : inspection.FSICNumber,
+            inspection.certType === 1 ? formatFullDate(inspection.dateFSEC) : formatFullDate(inspection.dateFSIC),
+            (inspection.certType === 2 || inspection.certType === 3) ? formatFullDate(inspection.validUntil) : '-',
+            inspection.amountPaid,
+            inspection.ORNumber,
+            formatFullDate(inspection.dateOR),
+            inspection.recommendApproval,
+            inspection.approved,
+            inspection.personnel.name,
+            inspection.inspectionOrderNumber,
+            formatFullDate(inspection.schedule),
+            inspection.ditControlNumber,
+            inspection.buildingNumber,
+            inspection.applicant.contactNumber,
+            inspection.user.email,
+            certTypeName
+        ]);
+    });
+
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+
+    const colWidth = [
+        { wpx: 120 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 },
+        { wpx: 200 }
+    ];
+    worksheet['!cols'] = colWidth;
+
+    const headerRow = 4;
+    for (let col = 0; col < data[headerRow].length; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: headerRow, c: col });
+        if (!worksheet[cellAddress]) {
+            worksheet[cellAddress] = {};
+        }
+
+        worksheet[cellAddress].s = {
+            font: { bold: true },
+            fill: {
+                fgColor: { rgb: "FFCCFF" }
+            }
+        };
+    }
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Fire Inspections - ${formatMonthYear(props.today)} Report.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+
 
 </script>
 
@@ -299,6 +490,11 @@ const updateStatus = (id, name) => {
                                                     <input type="date"
                                                         class="form-control form-control-sm mb-3"
                                                         v-model="generateCertificateForm.validFrom">
+
+                                                    <label for="">Valid Until <span class="text-danger">*</span></label>
+                                                    <input type="date"
+                                                        class="form-control form-control-sm mb-3"
+                                                        v-model="generateCertificateForm.validUntil">
                                                 </div>
 
                                                 <label for="" v-if="generateCertificateForm.certType === 1">FSEC
@@ -340,6 +536,22 @@ const updateStatus = (id, name) => {
                                                     <option v-for="(ps, index) in personnel" :value="ps.id">{{ ps.name
                                                         }}</option>
                                                 </select>
+
+                                                <div>
+                                                    <label for="">Inspection Order Number <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control form-control-sm mb-3"
+                                                        v-model="generateCertificateForm.inspectionOrderNumber" required>
+
+                                                    <label for="">DIT Control Number <span class="text-danger">*</span></label>
+                                                    <input type="text"
+                                                        class="form-control form-control-sm mb-3"
+                                                        v-model="generateCertificateForm.ditControlNumber" required>
+
+                                                    <label for="">Business/Building Number <span class="text-danger">*</span></label>
+                                                    <input type="text"
+                                                        class="form-control form-control-sm mb-3"
+                                                        v-model="generateCertificateForm.buildingNumber" required>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -371,12 +583,12 @@ const updateStatus = (id, name) => {
                                             <form action="" @submit.prevent="uploadFile()">
                                                 <label for="">Upload Checklist Form <span class="text-danger text-xs">*</span></label>
                                                 <input type="file" class="form-control form-control-sm mb-3"
-                                                    @change="handleFileChange" accept=".pdf, .jpg, .png, .jpeg"
+                                                    @change="handleFileChange" accept=".pdf, .jpg"
                                                     required>
 
-                                                <label for="">Upload Picture <span class="text-danger text-xs">*</span></label>
+                                                <label for="">Upload Picture for Proof <span class="text-danger text-xs">*</span></label>
                                                 <input type="file" class="form-control form-control-sm mb-3"
-                                                    @change="handlePictureChange" accept=".pdf, .jpg, .png, .jpeg"
+                                                    @change="handlePictureChange" accept=".jpg"
                                                     required>
                                                     
                                                 <button class="btn btn-sm btn-info">Upload</button>
@@ -407,6 +619,44 @@ const updateStatus = (id, name) => {
 
                     <div class="row overflowx-auto">
 
+                        <div class="col-md-8" v-if="id === 3">
+                            <form action="" @submit.prevent="searchYearMonth">
+                                <div class="d-flex justify-content-between align-items-center mb-4 mt-1">
+                                    <!-- Year Selector -->
+                                    <select v-model="searchForm.searchYear" id="year" class="form-control mr-3"
+                                        style="border-radius: 5px;" required>
+                                        <option value="">Select Year ...</option>
+                                        <option v-for="year in years" :key="year" :value="year">
+                                            {{ year }}
+                                        </option>
+                                    </select>
+
+                                    <!-- Month Selector -->
+                                    <select v-model="searchForm.searchMonth" id="month" class="form-control mr-3"
+                                        style="border-radius: 5px;" required>
+                                        <option value="">Select Month ...</option>
+                                        <option v-for="(month, index) in months" :key="index" :value="String(index + 1).padStart(2, '0')">
+                                            {{ month }}
+                                        </option>
+
+                                    </select>
+
+                                    <!-- Search Button -->
+                                    <button
+                                        class="btn btn-dark btn-sm ms-3 d-flex justify-content-center align-items-center shadow-md rounded-md">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3" v-if="id === 3">
+                            <button @click="downloadExcel" style="font-size: 11px; font-weight: normal; padding: 5px 5px 5px; margin-top: 5px;" class="btn btn-success btn-sm d-flex align-items-center">
+                                <iconify-icon icon="iwwa:file-csv" width="20"></iconify-icon> <span>Download Report</span>
+                            </button></div>
+                        </div>
+                        
                         <div class="col-md-12">
                             <div class="card rounded-md">
                                 <div class="card-header">
@@ -414,6 +664,7 @@ const updateStatus = (id, name) => {
                                         <h6 class="fw-bold" v-if="id === 1">Pending</h6>
                                         <h6 class="fw-bold" v-if="id === 2">Scheduled</h6>
                                         <h6 class="fw-bold" v-if="id === 3">Inspection History</h6>
+                                        <h6 class="fw-bold" v-if="id === 3" style="font-weight: bold; font-size: 16px">{{ formatMonth(today) }}</h6>
                                     </div>
                                 </div>
 
@@ -445,7 +696,7 @@ const updateStatus = (id, name) => {
                                                                 <div class="p-1"><span class="text-muted">Phone:</span>
                                                                     {{ ip.applicant.contactNumber }}</div>
                                                                 <div class="p-1"><span
-                                                                        class="text-muted">Address:</span> {{ ip.address
+                                                                        class="text-muted">Address:</span> {{ ip.purok }},  {{ ip.address
                                                                     }}</div>
                                                             </div>
                                                         </div>
@@ -484,11 +735,11 @@ const updateStatus = (id, name) => {
 
                                                         <div class="d-flex align-items-center">
                                                             <div class="d-flex flex-column">
-                                                                <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null" target="_blank" class="text-decoration-none mb-2">
+                                                                <a :href="`/storage/files/${ip.file}`" v-if="ip.file != null"  class="text-decoration-none mb-2">
                                                                     <i class="fa-solid fa-file-pdf"></i> Checklist Form
                                                                 </a>
 
-                                                                <a :href="`/storage/files/${ip.picture}`" v-if="ip.file != null" target="_blank" class="text-decoration-none">
+                                                                <a :href="`/storage/files/${ip.picture}`" v-if="ip.file != null"  class="text-decoration-none">
                                                                     <i class="fa-solid fa-images"></i> Picture/Image
                                                                 </a>
                                                             </div>
@@ -549,7 +800,7 @@ const updateStatus = (id, name) => {
                                                         </button>
 
                                                         <a :href="`/admin/certificate/${ip.id}`"
-                                                            v-if="ip.certStatus != null" target="_blank"
+                                                            v-if="ip.certStatus != null" 
                                                             class="nav-link">
                                                             <i class="fa-solid fa-file-pdf"></i>
                                                             <span v-if="ip.certType === 1"> FSEC Certificate</span>
@@ -592,6 +843,24 @@ var SweetAlert = Swal.mixin({
 
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
+}
+
+function formatMonth(dateString) {
+    const options = { year: 'numeric', month: 'long' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
+}
+
+function formatMonthYear(dateString) {
+    const options = { month: 'long', year: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
+}
+
+function formatFullDate(dateString) {
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', options);
 }

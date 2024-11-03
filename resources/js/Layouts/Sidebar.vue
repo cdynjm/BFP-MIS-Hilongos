@@ -86,28 +86,35 @@ onMounted(() => {
       <div v-if="user?.role === 1">
         <li :class="['nav-item', isActive('Admin/Dashboard') ? 'active' : '']">
           <a class="nav-link" @click.prevent="navigateTo('admin.dashboard')" href="#">
-            <i class="typcn typcn-device-desktop menu-icon"></i>
+            <iconify-icon icon="noto-v1:bar-chart" width="22" class="menu-icon mr-3"></iconify-icon>
             <span class="menu-title" style="margin-left: 5px;">Dashboard</span>
           </a>
         </li>
         <li :class="['nav-item', isActive('Admin/Personnel') ? 'active' : '']">
           <a class="nav-link" @click.prevent="navigateTo('admin.personnel')" href="#">
-            <i class="fa-solid fa-users-gear menu-icon"></i>
+            <iconify-icon icon="noto:firefighter-medium-light-skin-tone" width="24" class="menu-icon mr-3"></iconify-icon>
             <span class="menu-title">Personnel</span>
           </a>
         </li>
 
         <li :class="['nav-item', isActive('Admin/Fire-Incident') ? 'active' : '']">
           <a class="nav-link" @click.prevent="navigateTo('admin.fire-incident')" href="#">
-            <i class="fa-solid fa-fire menu-icon mr-4"></i>
+            <iconify-icon icon="vscode-icons:file-type-firebase" width="24" class="menu-icon mr-3"></iconify-icon>
             <span class="menu-title">Fire Incidents</span>
           </a>
         </li>
 
-        <li :class="['nav-item', isActive('Admin/SMS') ? 'active' : '']">
-          <a class="nav-link" @click.prevent="navigateTo('admin.sms-token')" href="#">
-            <i class="fa-solid fa-comment-sms menu-icon"></i>
-            <span class="menu-title">SMS Settings</span>
+        <li :class="['nav-item', isActive('Admin/Applicants') ? 'active' : '']">
+          <a class="nav-link" @click.prevent="navigateTo('admin.applicants-users')" href="#">
+            <iconify-icon icon="flat-color-icons:businessman" width="24" class="menu-icon mr-3"></iconify-icon>
+            <span class="menu-title">Applicants</span>
+          </a>
+        </li>
+
+        <li :class="['nav-item', isActive('Admin/Settings') ? 'active' : '']">
+          <a class="nav-link" @click.prevent="navigateTo('admin.settings')" href="#">
+            <iconify-icon icon="noto-v1:gear" width="24" class="menu-icon mr-3"></iconify-icon>
+            <span class="menu-title">Settings</span>
           </a>
         </li>
       </div>
@@ -115,13 +122,13 @@ onMounted(() => {
       <div v-if="user?.role === 2">
         <li :class="['nav-item', isActive('Personnel/Dashboard') ? 'active' : '']">
           <a class="nav-link" @click.prevent="navigateTo('personnel.dashboard')" href="#">
-            <i class="typcn typcn-device-desktop menu-icon"></i>
+            <iconify-icon icon="noto-v1:bar-chart" width="22" class="menu-icon mr-3"></iconify-icon>
             <span class="menu-title" style="margin-left: 5px;">Dashboard</span>
           </a>
         </li>
         <li :class="['nav-item', isActive('Personnel/Fire-Incident') ? 'active' : '']">
           <a class="nav-link" @click.prevent="navigateTo('personnel.fire-incident')" href="#">
-            <i class="fa-solid fa-fire menu-icon mr-4"></i>
+            <iconify-icon icon="vscode-icons:file-type-firebase" width="24" class="menu-icon mr-3"></iconify-icon>
             <span class="menu-title">Fire Incidents</span>
           </a>
         </li>
@@ -130,13 +137,13 @@ onMounted(() => {
       <div v-if="user?.role === 3">
         <li :class="['nav-item', isActive('Applicant/Dashboard') ? 'active' : '']">
           <a class="nav-link" @click.prevent="navigateTo('applicant.dashboard')" href="#">
-            <i class="typcn typcn-device-desktop menu-icon"></i>
+            <iconify-icon icon="twemoji:file-folder" width="24" class="menu-icon mr-3"></iconify-icon>
             <span class="menu-title" style="margin-left: 5px;">Dashboard</span>
           </a>
         </li>
         <li :class="['nav-item', isActive('Applicant/RequestInspection') ? 'active' : '']">
           <a class="nav-link" @click.prevent="navigateTo('applicant.request-inspection')" href="#">
-            <i class="fa-solid fa-bullhorn menu-icon"></i>
+            <iconify-icon icon="emojione-v1:document" width="24" class="menu-icon mr-3"></iconify-icon>
             <span class="menu-title" style="margin-left: 5px;">Request Inspection</span>
           </a>
         </li>

@@ -11,6 +11,7 @@ use App\Http\Controllers\Security\AESCipher;
 
 use App\Models\User;
 use App\Models\FireInspection;
+use App\Models\CertInfo;
 
 class InspectionController extends Controller
 {
@@ -62,10 +63,11 @@ class InspectionController extends Controller
     public function certificate(Request $request) {
 
         $fireInspection = FireInspection::where('id', $this->aes->decrypt($request->id))->first();
+        $cert = CertInfo::first();
 
         if($fireInspection->certType == 1)
-            return view('FSEC', ['fi' => $fireInspection]);
+            return view('FSEC', ['fi' => $fireInspection, 'cert' => $cert]);
         if($fireInspection->certType == 2 || $fireInspection->certType == 3)
-            return view('FSIC', ['fi' => $fireInspection]);
+            return view('FSIC', ['fi' => $fireInspection, 'cert' => $cert]);
     }
 }

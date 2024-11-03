@@ -22,7 +22,9 @@ class FireIncidentController extends Controller
 
     public function fireIncident() {
 
-        $fireIncident = FireIncident::where('date', 'like', '%'.date('Y').'%')->get()
+        $fireIncident = FireIncident::where('date', 'like', '%'.date('Y').'%')
+        ->orderBy('date', 'DESC')
+        ->get()
 
         ->map(function ($data) {
             $array = $data->toArray();
@@ -39,7 +41,9 @@ class FireIncidentController extends Controller
 
     public function searchYear(Request $request) {
 
-        $fireIncident = FireIncident::where('date', 'like', '%'.$request->search.'%')->get()
+        $fireIncident = FireIncident::where('date', 'like', '%'.$request->search.'%')
+        ->orderBy('date', 'DESC')
+        ->get()
 
         ->map(function ($data) {
             $array = $data->toArray();

@@ -6,7 +6,8 @@ use App\Http\Controllers\Pages\Admin\DashboardController;
 use App\Http\Controllers\Pages\Admin\PersonnelController;
 use App\Http\Controllers\Pages\Admin\FireIncidentController;
 use App\Http\Controllers\Pages\Admin\InspectionController;
-use App\Http\Controllers\Pages\Admin\SMSController;
+use App\Http\Controllers\Pages\Admin\SettingsController;
+use App\Http\Controllers\Pages\Admin\ApplicantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,10 +46,16 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('/delete-form', [InspectionController::class, 'deleteForm'])->name('admin.delete-form');
 			Route::patch('/reschedule', [InspectionController::class, 'reschedule'])->name('admin.reschedule');
 			Route::patch('/generate-certificate', [InspectionController::class, 'generateCertificate'])->name('admin.generate-certificate');
+			Route::get('/inspections/search/{id}', [InspectionController::class, 'searchYearMonth'])->name('admin.search-year-month');
 
-			Route::get('/sms-token', [SMSController::class, 'SMS'])->name('admin.sms-token');
-			Route::patch('/sms-token', [SMSController::class, 'updateSMS'])->name('admin.update-sms-token');
+			Route::get('/settings', [SettingsController::class, 'settings'])->name('admin.settings');
+			Route::patch('/sms-token', [SettingsController::class, 'updateSMS'])->name('admin.update-sms-token');
+			Route::patch('/cert-info', [SettingsController::class, 'updateCertInfo'])->name('admin.update-cert-info');
 
+			Route::get('/applicants-users', [ApplicantController::class, 'applicants'])->name('admin.applicants-users');
+			Route::get('/applicant-certificate-history/{id}', [ApplicantController::class, 'applicantsRecords'])->name('admin.applicants-records');
+
+			
 			Route::get('/certificate/{id}', [InspectionController::class, 'certificate']);
 
 		});

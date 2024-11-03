@@ -16,14 +16,15 @@ use App\Models\FireInspection;
 use App\Models\Personnel;
 use App\Models\Municipal;
 use App\Models\Barangay;
+use App\Models\CertInfo;
 
-use App\Http\Controllers\Pages\Admin\SMSController;
+use App\Http\Controllers\Pages\Admin\SettingsController;
 
 class InspectionController extends Controller
 {
     public function __construct(
         protected AESCipher $aes,
-        protected SMSController $sms
+        protected SettingsController $sms
     ) {}
 
     public function inspections(Request $request) {
@@ -32,7 +33,8 @@ class InspectionController extends Controller
         $barangay = Barangay::where('citymunCode', $municipal->citymunCode)->get();
 
         if($this->aes->decrypt($request->id) == 1) {
-            $raw = FireInspection::with((new FireInspection)->relation)->where('status', 1)->get();
+            $raw = FireInspection::with((new FireInspection)->relation)->where('status', 1)
+            ->get();
             $id = 1;
         }
 
@@ -42,7 +44,9 @@ class InspectionController extends Controller
         }
 
         if($this->aes->decrypt($request->id) == 3) {
-            $raw = FireInspection::with((new FireInspection)->relation)->where('status', 3)->get();
+            $raw = FireInspection::with((new FireInspection)->relation)->where('status', 3)
+            ->where('schedule', 'like', '%'.date('Y-m').'%')
+            ->get();
             $id = 3;
         }
 
@@ -63,6 +67,7 @@ class InspectionController extends Controller
         return Inertia::render('Admin/Inspections', [
             'auth' => Auth::user()->load(Auth::user()->relation),
             'id' => $id,
+            'encryptedID' => $request->id,
             'inspections' => $inspections,
             'personnel' => $personnel,
             'today' => date('Y-m-d'),
@@ -142,6 +147,9 @@ class InspectionController extends Controller
             'recommendPosition' => $recommendApproval->position,
             'approved' => $approved->name,
             'approvedPosition' => $approved->position,
+            'inspectionOrderNumber' => $request->inspectionOrderNumber,
+            'ditControlNumber' => $request->ditControlNumber,
+            'buildingNumber' => $request->buildingNumber,
             'certStatus' => 1
         ]);
 
@@ -156,8 +164,9 @@ class InspectionController extends Controller
             FireInspection::where('id', $this->aes->decrypt($request->id))->update([
                 'description' => $request->description,
                 'validFrom' => $request->validFrom,
+                'validUntil' => $request->validUntil,
                 'FSICNumber' => $request->fsicfsecNumber,
-                'dateFSIC' => $request->date
+                'dateFSIC' => $request->date,
             ]);
         }
     }
@@ -165,10 +174,60 @@ class InspectionController extends Controller
     public function certificate(Request $request) {
 
         $fireInspection = FireInspection::where('id', $this->aes->decrypt($request->id))->first();
+        $cert = CertInfo::first();
 
         if($fireInspection->certType == 1)
-            return view('FSEC', ['fi' => $fireInspection]);
+            return view('FSEC', ['fi' => $fireInspection, 'cert' => $cert]);
         if($fireInspection->certType == 2 || $fireInspection->certType == 3)
-            return view('FSIC', ['fi' => $fireInspection]);
+            return view('FSIC', ['fi' => $fireInspection, 'cert' => $cert]);
+    }
+
+    public function searchYearMonth(Request $request) {
+
+        $municipal = Municipal::where('id', 979)->first();
+        $barangay = Barangay::where('citymunCode', $municipal->citymunCode)->get();
+
+        if($this->aes->decrypt($request->id) == 1) {
+            $raw = FireInspection::with((new FireInspection)->relation)->where('status', 1)
+            ->get();
+            $id = 1;
+        }
+
+        if($this->aes->decrypt($request->id) == 2) {
+            $raw = FireInspection::with((new FireInspection)->relation)->where('status', 2)->get();
+            $id = 2;
+        }
+
+        if($this->aes->decrypt($request->id) == 3) {
+            $raw = FireInspection::with((new FireInspection)->relation)->where('status', 3)
+            ->where('schedule', 'like', '%'.$request->searchYear.'-'.$request->searchMonth.'%')
+            ->get();
+            $id = 3;
+        }
+
+        $inspections = $raw->map(function ($data) {
+            $array = $data->toArray();
+            $array['id'] = $this->aes->encrypt($data->id);
+            return $array;
+        });
+
+        $personnel = Personnel::get()
+
+        ->map(function ($data) {
+            $array = $data->toArray();
+            $array['id'] = $this->aes->encrypt($data->id);
+            return $array;
+        });
+
+        return Inertia::render('Admin/Inspections', [
+            'auth' => Auth::user()->load(Auth::user()->relation),
+            'id' => $id,
+            'encryptedID' => $request->id,
+            'inspections' => $inspections,
+            'personnel' => $personnel,
+            'today' => $request->searchYear.'-'.$request->searchMonth,
+            'municipal' => $municipal,
+            'barangay' => $barangay
+        ]);
     }
 }
