@@ -11,7 +11,9 @@ import { ref, onMounted } from 'vue';
 const props = defineProps({
     auth: Array,
     fireIncident: Array,
-    year: String
+    year: String,
+    municipal: Array,
+    barangay: Object
 })
 
 const searchForm = useForm({
@@ -324,10 +326,16 @@ const downloadExcel = () => {
                                                 <textarea name="" id="" class="form-control mb-3" rows="5"
                                                     v-model="createForm.owner" required></textarea>
 
-                                                <label for="" class="mb-1">Location <span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" class="form-control form-control-sm mb-3"
-                                                    v-model="createForm.location" required>
+                                                <label for="" class="mb-1">Municipal <span class="text-danger text-xs">*</span></label>
+                                                <input type="text" class="form-control form-control-sm mb-3" :value="municipal.citymunDesc" readonly>
+
+                                                <label for="" class="mb-1">Barangay <span class="text-danger text-xs">*</span></label>
+                                                <select name="" id="" class="form-control mb-3" v-model="createForm.location" required>
+                                                    
+                                                    <option v-for="(br, index) in barangay" :value="br.brgyCode">
+                                                        {{ br.brgyDesc }}
+                                                    </option>
+                                                </select>
 
                                                 <label for="" class="mb-1">Highest Fire Alarm Level Raised <span
                                                         class="text-danger">*</span></label>
@@ -421,10 +429,17 @@ const downloadExcel = () => {
                                                 <textarea name="" id="" class="form-control mb-3" rows="5"
                                                     v-model="editForm.owner" required></textarea>
 
-                                                <label for="" class="mb-1">Location <span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" class="form-control form-control-sm mb-3"
-                                                    v-model="editForm.location" required>
+                                                <label for="" class="mb-1">Municipal <span class="text-danger text-xs">*</span></label>
+                                                <input type="text" class="form-control form-control-sm mb-3" :value="municipal.citymunDesc" readonly>
+
+                                                <label for="" class="mb-1">Barangay <span class="text-danger text-xs">*</span></label>
+                                                <select name="" id="" class="form-control mb-3" v-model="editForm.location" required>
+                                                    
+                                                    <option v-for="(br, index) in barangay" :value="br.brgyCode">
+                                                        {{ br.brgyDesc }}
+                                                    </option>
+                                                </select>
+
 
                                                 <label for="" class="mb-1">Highest Fire Alarm Level Raised <span
                                                         class="text-danger">*</span></label>
@@ -553,8 +568,11 @@ const downloadExcel = () => {
                                                     <td>
                                                         <div class="p-1"><span class="text-muted">Owner:</span> {{
                                                             fi.owner }}</div>
-                                                        <div class="p-1"><span class="text-muted">Location:</span> {{
-                                                            fi.location }}</div>
+                                                        <div class="p-1"><span class="text-muted">Location:</span>
+                                                            <span class="text-capitalize">
+                                                                Brgy. {{ fi.brgy.brgyDesc }} {{ municipal.citymunDesc.toLowerCase() }} Leyte
+                                                            </span>
+                                                        </div>
                                                         <div class="p-1"><span class="text-muted">DateTime:</span> {{
                                                             formatDate(fi.date) }} | {{ formatTime12Hour(fi.time) }}
                                                         </div>

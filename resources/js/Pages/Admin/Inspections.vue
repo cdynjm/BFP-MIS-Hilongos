@@ -6,7 +6,7 @@ import Navbar from '@/Layouts/Navbar.vue';
 import Sidebar from '@/Layouts/Sidebar.vue';
 import Footer from '@/Layouts/Footer.vue';
 import * as XLSX from 'xlsx';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, reactive } from 'vue';
 
 const props = defineProps({
     auth: Array,
@@ -227,7 +227,8 @@ const deleteFile = (id) => {
 
 const rescheduleForm = useForm({
     id: null,
-    date: null
+    date: null,
+    personnel: null
 });
 
 const reschedule = () => {
@@ -273,6 +274,19 @@ const generateCertificateForm = useForm({
     ditControlNumber: null,
     buildingNumber: null
 });
+
+    watch(
+        () => generateCertificateForm.date,
+        (newDate) => {
+            if (newDate) {
+                const selectedDate = new Date(newDate);
+                const validUntilDate = new Date(selectedDate.setFullYear(selectedDate.getFullYear() + 1));
+                generateCertificateForm.validUntil = validUntilDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+            } else {
+                generateCertificateForm.validUntil = null;
+            }
+        }
+    );
 
 const generateCertificate = (id, name, address, building, certType) => {
     generateCertificateForm.id = id;
@@ -329,7 +343,7 @@ const downloadExcel = () => {
         ["Report Title", "BFP FIRE INSPECTION/EVALUATION MONTHLY REPORT"],
         ["Report Month/Year", formatMonthYear(props.today)],
         [],
-        ["No.", "Establishment/Building Name", "Owner", "Municipal", "Barangay", "Description", "FSIC/FSEC Number", "Date FSEC/FSIC", "Valid Until", "Amount Paid", "OR Number", "Date of OR", "Recommended Approval", "Approved By", "Inspector", "Inspection Order Number", "Date of Inspection", "DIT Control Number", "Business/Building Number", "Owner Contact Number", "Owner Email", "Cert Type"],
+        ["No.", "Establishment/Building Name", "Owner", "Municipal", "Barangay", "Description", "FSIC/FSEC Number", "Date FSEC/FSIC & Valid From", "Valid Until", "Amount Paid", "OR Number", "Date of OR", "Recommended Approval", "Approved By", "Inspector", "Inspection Order Number", "Date of Inspection", "DIT Control Number", "Business/Building Number", "Owner Contact Number", "Owner Email", "Cert Type"],
     ];
 
     props.inspections.forEach((inspection, index) => {
@@ -479,22 +493,28 @@ const downloadExcel = () => {
                                                             {{ br.brgyDesc }}
                                                         </option>
                                                     </select>
+
+                                                    <label for="">Date <span class="text-danger">*</span></label>
+                                                <input type="date"
+                                                    class="form-control form-control-sm mb-3"
+                                                    v-model="generateCertificateForm.date" required>
+
                                               
                                                 <div
                                                     v-if="generateCertificateForm.certType === 2 || generateCertificateForm.certType === 3">
-                                                    <label for="">Description <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control form-control-sm mb-3"
-                                                        v-model="generateCertificateForm.description" required>
-
-                                                    <label for="">Valid From <span class="text-danger">*</span></label>
-                                                    <input type="date"
-                                                        class="form-control form-control-sm mb-3"
-                                                        v-model="generateCertificateForm.validFrom">
 
                                                     <label for="">Valid Until <span class="text-danger">*</span></label>
                                                     <input type="date"
                                                         class="form-control form-control-sm mb-3"
                                                         v-model="generateCertificateForm.validUntil">
+
+                                                    <label for="">Description <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control form-control-sm mb-3"
+                                                        v-model="generateCertificateForm.description" required>
+
+                                                   
+
+                                                  
                                                 </div>
 
                                                 <label for="" v-if="generateCertificateForm.certType === 1">FSEC
@@ -505,11 +525,7 @@ const downloadExcel = () => {
                                                 <input type="text" class="form-control form-control-sm mb-3"
                                                     v-model="generateCertificateForm.fsicfsecNumber" required>
 
-                                                <label for="">Date <span class="text-danger">*</span></label>
-                                                <input type="date"
-                                                    class="form-control form-control-sm mb-3"
-                                                    v-model="generateCertificateForm.date" required>
-
+                                               
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="">Amount Paid <span class="text-danger">*</span></label>
@@ -597,9 +613,19 @@ const downloadExcel = () => {
                                         <div class="col-md-12">
                                             <form action="" @submit.prevent="reschedule()">
                                                 <label class="text-dark text-muted">Reschedule
-                                                    Visit/Inspection <span class="text-danger">*</span></label>
+                                                    Visit/Inspection</label>
                                                 <input type="date" class="form-control form-control-sm mb-3"
-                                                    v-model="rescheduleForm.date" :min="today" required>
+                                                    v-model="rescheduleForm.date" :min="today">
+
+
+                                                <label class="text-dark text-muted">Change Personnel (If Necessary)</label>
+                                                <select name="" id="" v-model="rescheduleForm.personnel"
+                                                    class="form-control form-control-sm mb-4">
+                                                    <option value="">Select...</option>
+                                                    <option v-for="(ps, index) in personnel" :value="ps.id">
+                                                        {{ ps.name }}</option>
+                                                </select>
+
                                                 <button class="btn btn-sm btn-info">Set</button>
                                             </form>
                                         </div>

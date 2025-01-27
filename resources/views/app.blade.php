@@ -8,7 +8,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>BFP - IMS</title>
+  <title>BFP-MIS Hilongos</title>
   <!-- base:css -->
   <link rel="stylesheet" href="/vendors/typicons.font/font/typicons.css">
   <script src="/vendors/js/vendor.bundle.base.js"></script>

@@ -136,7 +136,7 @@ class InspectionController extends Controller
         if($request->certType == 2 || $request->certType == 3) {
             FireInspection::where('id', $this->aes->decrypt($request->id))->update([
                 'description' => $request->description,
-                'validFrom' => $request->validFrom,
+                'validFrom' => $request->date,
                 'validUntil' => $request->validUntil,
                 'FSICNumber' => $request->fsicfsecNumber,
                 'dateFSIC' => $request->date

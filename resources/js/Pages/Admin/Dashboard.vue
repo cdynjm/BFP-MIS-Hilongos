@@ -17,7 +17,9 @@ const props = defineProps({
     scheduledID: String,
     archiveID: String,
     fireIncidentAnalytics: Array,
-    year: Number
+    year: Number,
+    municipal: Array,
+    barangay: Object
 });
 
 const searchForm = useForm({
@@ -35,27 +37,37 @@ const searchYear = () => {
     searchForm.get(route('admin.search-year-dashboard'));
 };
 
-const countIncidentsPerMonth = (analytics) => {
+const countIncidentsPerMonthWithBarangays = (analytics) => {
     const incidentsPerMonth = {};
+    const barangaysPerMonth = {};
     const allMonths = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
 
+    // Initialize months
     allMonths.forEach(month => {
         incidentsPerMonth[month] = 0;
+        barangaysPerMonth[month] = [];
     });
 
     analytics.forEach((incident) => {
         const date = new Date(incident.date);
         const month = date.toLocaleString('default', { month: 'short' });
+        
+        // Count incidents per month
         incidentsPerMonth[month]++;
+        
+        // Collect barangays for each month, avoiding duplicates
+        if (!barangaysPerMonth[month].includes(incident.brgy.brgyDesc)) {
+            barangaysPerMonth[month].push(incident.brgy.brgyDesc);
+        }
     });
 
-    return incidentsPerMonth;
+    return { incidentsPerMonth, barangaysPerMonth };
 };
 
-const incidentsCount = countIncidentsPerMonth(props.fireIncidentAnalytics);
+const { incidentsPerMonth, barangaysPerMonth } = countIncidentsPerMonthWithBarangays(props.fireIncidentAnalytics);
 
 const chartOptions = ref({
     chart: {
@@ -65,27 +77,187 @@ const chartOptions = ref({
         },
     },
     stroke: {
-        curve: 'smooth'
+        curve: 'smooth',
     },
     colors: ['#FF0000'],
     xaxis: {
-        categories: Object.keys(incidentsCount),
+        categories: Object.keys(incidentsPerMonth),
     },
     tooltip: {
-        y: {
-            formatter: function (value) {
-                return Math.floor(value);
-            }
-        }
+        custom: function ({ dataPointIndex }) {
+            const month = Object.keys(incidentsPerMonth)[dataPointIndex];
+            const incidents = Object.values(incidentsPerMonth)[dataPointIndex];
+            const barangays = barangaysPerMonth[month];
+            
+            return `
+                <div style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                    <strong style="color: #FF0000;">Fire Incidents: ${incidents}</strong>
+                    <div style="margin-top: 5px; font-size: 12px; color: #333;">
+                        <strong>Barangays/Location:</strong>
+                        <ul style="padding-left: 20px; margin: 5px 0 0;">
+                            ${barangays.length > 0 ? barangays.map(brgy => `<li>${brgy}</li>`).join('') : '<li>No Data Record</li>'}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        },
     },
 });
 
 const chartSeries = ref([
     {
         name: 'Fire Incidents',
-        data: Object.values(incidentsCount).map(Math.floor),
+        data: Object.values(incidentsPerMonth).map(Math.floor),
     },
 ]);
+
+
+const countIncidentsPerBarangay = (analytics, barangays) => {
+    const incidentsPerBarangay = {};
+
+    // Initialize barangay counts
+    Object.values(barangays).forEach((brgy) => {
+        incidentsPerBarangay[brgy.brgyDesc] = 0;
+    });
+
+    // Count incidents per barangay
+    analytics.forEach((incident) => {
+        const barangay = Object.values(barangays).find(
+            (brgy) => brgy.brgyCode === incident.location
+        );
+        if (barangay) {
+            incidentsPerBarangay[barangay.brgyDesc]++;
+        }
+    });
+
+    return incidentsPerBarangay;
+};
+
+const incidentsPerBarangay = countIncidentsPerBarangay(
+    props.fireIncidentAnalytics,
+    props.barangay
+);
+
+// Split the data into two groups: first 25 and the remaining 26 barangays
+const first25Barangays = Object.keys(incidentsPerBarangay).slice(0, 25);
+const remainingBarangays = Object.keys(incidentsPerBarangay).slice(25);
+
+const first25Incidents = first25Barangays.map((brgy) => incidentsPerBarangay[brgy]);
+const remainingIncidents = remainingBarangays.map((brgy) => incidentsPerBarangay[brgy]);
+
+// Chart Options for the first group (first 25 barangays)
+const barangayChartOptionsFirst = ref({
+    chart: {
+        type: 'bar', // Bar chart
+        height: 350,
+        toolbar: {
+            show: false,
+        },
+    },
+    plotOptions: {
+        bar: {
+            horizontal: true, // Horizontal bars
+            barHeight: '60%', // Adjust bar height
+        },
+    },
+    xaxis: {
+        title: {
+            text: 'No. of Incidents',
+        },
+        categories: first25Barangays, // First 25 barangay names
+        labels: {
+            rotate: -90, // Rotate labels for better readability
+        },
+    },
+   
+    dataLabels: {
+        enabled: true, // Show data labels
+    },
+    stroke: {
+        width: 2, // Bar border width
+    },
+    colors: ['#FF0000'], // Red bars
+    tooltip: {
+        custom: function ({ dataPointIndex }) {
+            const barangay = first25Barangays[dataPointIndex];
+            const incidents = first25Incidents[dataPointIndex];
+            return `
+                <div style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                    <strong style="color: #FF0000;">${barangay}</strong>
+                    <div style="margin-top: 5px; font-size: 12px; color: #333;">
+                        Fire Incidents: <strong>${incidents}</strong>
+                    </div>
+                </div>
+            `;
+        },
+    },
+});
+
+// Chart Options for the second group (remaining 26 barangays)
+const barangayChartOptionsSecond = ref({
+    chart: {
+        type: 'bar', // Bar chart
+        height: 350,
+        toolbar: {
+            show: false,
+        },
+    },
+    plotOptions: {
+        bar: {
+            horizontal: true, // Horizontal bars
+            barHeight: '60%', // Adjust bar height
+        },
+    },
+    xaxis: {
+        title: {
+            text: 'No. of Incidents',
+        },
+        categories: remainingBarangays, // Remaining 26 barangay names
+        labels: {
+            rotate: -90, // Rotate labels for better readability
+        },
+    },
+   
+    dataLabels: {
+        enabled: true, // Show data labels
+    },
+    stroke: {
+        width: 2, // Bar border width
+    },
+    colors: ['#FF0000'], // Red bars
+    tooltip: {
+        custom: function ({ dataPointIndex }) {
+            const barangay = remainingBarangays[dataPointIndex];
+            const incidents = remainingIncidents[dataPointIndex];
+            return `
+                <div style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                    <strong style="color: #FF0000;">${barangay}</strong>
+                    <div style="margin-top: 5px; font-size: 12px; color: #333;">
+                        Fire Incidents: <strong>${incidents}</strong>
+                    </div>
+                </div>
+            `;
+        },
+    },
+});
+
+// Chart Series for the first group (first 25 barangays)
+const barangayChartSeriesFirst = ref([
+    {
+        name: 'Fire Incidents (First 25)',
+        data: first25Incidents,
+    },
+]);
+
+// Chart Series for the second group (remaining 26 barangays)
+const barangayChartSeriesSecond = ref([
+    {
+        name: 'Fire Incidents (Remaining 26)',
+        data: remainingIncidents,
+    },
+]);
+
+
 
 
 const countFireAlarmLevels = (analytics) => {
@@ -302,6 +474,39 @@ const fireAlarmChartSeries = ref([
                                     <apexchart type="area" :options="chartOptions" :series="chartSeries" height="350" />
                                 </div>
                             </div>
+
+                            <div class="card rounded-md mb-4">
+                            <div class="card-header">
+                                <b>Fire Incidents by Barangay <span class="text-primary">{{ year }}</span></b>
+                            </div>
+                            <div class="card-body shadow-md">
+                                <!-- Two-column layout -->
+                                
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="w-1/2 pr-2">
+                                            <apexchart
+                                                type="bar"
+                                                :options="barangayChartOptionsFirst"
+                                                    :series="barangayChartSeriesFirst"
+                                                    height="800"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="w-1/2 pl-2">
+                                            <apexchart
+                                                type="bar"
+                                                :options="barangayChartOptionsSecond"
+                                                :series="barangayChartSeriesSecond"
+                                                height="800"
+                                            />
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <div class="card rounded-md">
                                 <div class="card-header">

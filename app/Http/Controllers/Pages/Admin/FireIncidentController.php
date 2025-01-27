@@ -15,6 +15,8 @@ use Illuminate\Validation\Rule;
 use App\Models\User;
 use App\Models\Personnel;
 use App\Models\FireIncident;
+use App\Models\Barangay;
+use App\Models\Municipal;
 
 class FireIncidentController extends Controller
 {
@@ -22,7 +24,10 @@ class FireIncidentController extends Controller
 
     public function fireIncident() {
 
-        $fireIncident = FireIncident::where('date', 'like', '%'.date('Y').'%')
+        $municipal = Municipal::where('id', 979)->first();
+        $barangay = Barangay::where('citymunCode', $municipal->citymunCode)->get();
+        
+        $fireIncident = FireIncident::with((new FireIncident)->relation)->where('date', 'like', '%'.date('Y').'%')
         ->orderBy('date', 'DESC')
         ->get()
 
@@ -35,7 +40,9 @@ class FireIncidentController extends Controller
         return Inertia::render('Admin/Fire-Incident',[
             'auth' => Auth::user()->load(Auth::user()->relation),
             'fireIncident' => $fireIncident,
-            'year' => date('Y')
+            'year' => date('Y'),
+            'municipal' => $municipal,
+            'barangay' => $barangay
         ]);
     }
 

@@ -403,9 +403,9 @@
                                     <span class="blank-field"
                                         style="text-align: center; width: 100%; border-bottom: none; font-size: 15px;"><i>(Description)</i></span>
 
-                                    <span class="blank-field" style="width: 50%;"></span> valid from </span><span
+                                    <span class="blank-field" style="width: 50%;"></span> valid until </span><span
                                     class="blank-field"
-                                    style="width: 31%; margin-left: 30px;"><strong>{{ date('d-M-Y', strtotime($fi->validFrom)) }}</strong>, valid until <strong>{{ date('d-M-Y', strtotime($fi->validUntil)) }}</strong></span>
+                                    style="width: 31%; margin-left: 30px;"><strong>{{ date('d-M-Y', strtotime($fi->validUntil)) }}</strong></span>
                             </p>
                         </div>
 
@@ -430,22 +430,32 @@
                                         style="width: 68%; text-align: right;"><b>{{ date('F d, Y', strtotime($fi->dateOR)) }}</b></span>
                                 </p>
                             </div>
-                            <div class="approval" style="margin-left: 150px;">
-                                <p style="margin-bottom: 30px;"><span class="bold"
-                                        style="font-weight: bold;">RECOMMEND
-                                        APPROVAL: </span></p>
-                                <p><span class="blank-field"
-                                        style="width: 80%; text-align: center; font-weight: bold;">{{ strtoupper($fi->recommendApproval) }}</span>
+                            <div class="approval" style="margin-left: 150px; text-align: center;">
+                                <!-- Recommend Approval Section -->
+                                <p style="margin-bottom: 30px;">
+                                    <span class="bold" style="font-weight: bold;">RECOMMEND APPROVAL:</span>
                                 </p>
-                                <div style="margin-left: 80px;">{{ strtoupper($fi->recommendPosition) }}</div>
-                                <br>
-                                <p><span class="bold" style="font-weight: bold;">APPROVED: </span></p>
                                 <p>
-                                <div class="blank-field" style="width: 80%; text-align: center; font-weight: bold;">
-                                    {{ strtoupper($fi->approved) }}</div>
+                                    <span class="blank-field" 
+                                          style="display: inline-block; width: 80%; text-align: center; font-weight: bold;">
+                                        {{ strtoupper($fi->recommendApproval) }}
+                                    </span>
                                 </p>
-                                <div>{{ strtoupper($fi->approvedPosition) }}</div>
+                                <p style="margin-top: 5px;">{{ strtoupper($fi->recommendPosition) }}</p>
+                            
+                                <!-- Approved Section -->
+                                <p style="margin-top: 30px;">
+                                    <span class="bold" style="font-weight: bold;">APPROVED:</span>
+                                </p>
+                                <p>
+                                    <span class="blank-field" 
+                                          style="display: inline-block; width: 80%; text-align: center; font-weight: bold;">
+                                        {{ strtoupper($fi->approved) }}
+                                    </span>
+                                </p>
+                                <p style="margin-top: 5px;">{{ strtoupper($fi->approvedPosition) }}</p>
                             </div>
+                            
                         </div>
 
 
@@ -469,7 +479,8 @@
                     </div>
                 </div>
 
-                <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">{{ $cert->code }}
+                <div style="font-size: 13px; font-weight: bold; margin-top: 10px; display: flex; justify-content: space-between">
+                    <span>{{ $cert->code }}</span>
                 </div>
             </div>
         @endfor
@@ -566,9 +577,9 @@
                                 <span class="blank-field"
                                     style="text-align: center; width: 100%; border-bottom: none; font-size: 15px;"><i>(Description)</i></span>
 
-                                <span class="blank-field" style="width: 50%;"></span> valid from </span><span
-                                class="blank-field"
-                                style="width: 31%; margin-left: 30px;"><strong>{{ date('d-M-Y', strtotime($fi->validFrom)) }}</strong>, valid until <strong>{{ date('d-M-Y', strtotime($fi->validUntil)) }}</strong></span>
+                                    <span class="blank-field" style="width: 50%;"></span> valid until </span><span
+                                    class="blank-field"
+                                    style="width: 31%; margin-left: 30px;"><strong>{{ date('d-M-Y', strtotime($fi->validUntil)) }}</strong></span>
                             </p>
                     </div>
 
@@ -592,20 +603,30 @@
                                     style="width: 68%; text-align: right;"><b>{{ date('F d, Y', strtotime($fi->dateOR)) }}</b></span>
                             </p>
                         </div>
-                        <div class="approval" style="margin-left: 150px;">
-                            <p style="margin-bottom: 30px;"><span class="bold" style="font-weight: bold;">RECOMMEND
-                                    APPROVAL: </span></p>
-                            <p><span class="blank-field"
-                                    style="width: 80%; text-align: center; font-weight: bold;">{{ strtoupper($fi->recommendApproval) }}</span>
+                        <div class="approval" style="margin-left: 150px; text-align: center;">
+                            <!-- Recommend Approval Section -->
+                            <p style="margin-bottom: 30px;">
+                                <span class="bold" style="font-weight: bold;">RECOMMEND APPROVAL:</span>
                             </p>
-                            <div style="margin-left: 80px;">{{ strtoupper($fi->recommendPosition) }}</div>
-                            <br>
-                            <p><span class="bold" style="font-weight: bold;">APPROVED: </span></p>
                             <p>
-                            <div class="blank-field" style="width: 80%; text-align: center; font-weight: bold;">
-                                {{ strtoupper($fi->approved) }}</div>
+                                <span class="blank-field" 
+                                      style="display: inline-block; width: 80%; text-align: center; font-weight: bold;">
+                                    {{ strtoupper($fi->recommendApproval) }}
+                                </span>
                             </p>
-                            <div>{{ strtoupper($fi->approvedPosition) }}</div>
+                            <p style="margin-top: 5px;">{{ strtoupper($fi->recommendPosition) }}</p>
+                        
+                            <!-- Approved Section -->
+                            <p style="margin-top: 30px;">
+                                <span class="bold" style="font-weight: bold;">APPROVED:</span>
+                            </p>
+                            <p>
+                                <span class="blank-field" 
+                                      style="display: inline-block; width: 80%; text-align: center; font-weight: bold;">
+                                    {{ strtoupper($fi->approved) }}
+                                </span>
+                            </p>
+                            <p style="margin-top: 5px;">{{ strtoupper($fi->approvedPosition) }}</p>
                         </div>
                     </div>
 
@@ -629,7 +650,11 @@
                 </div>
             </div>
 
-            <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">{{ $cert->code }}
+            <div style="font-size: 13px; font-weight: bold; margin-top: 10px; display: flex; justify-content: space-between">
+                <span>{{ $cert->code }}</span>
+               
+                <i style="color: red">Note: THIS IS A DUPLICATE COPY</i>
+               
             </div>
         </div>
     @endif

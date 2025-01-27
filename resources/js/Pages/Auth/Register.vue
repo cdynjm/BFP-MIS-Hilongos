@@ -106,7 +106,7 @@ const submit = () => {
                 </div>
                 <div class="form-group">
                   <label for="" class="mb-1">Profile Picture <span class="text-danger text-xs">*</span></label>
-                  <input type="file" class="form-control form-control-sm rounded" @change="createPicture" accept=".jpg, .png, .jpeg" required>
+                  <input type="file" class="form-control form-control-sm rounded" @change="createPicture" accept=".jpg" required>
                 </div>
                 <div class="form-group">
                   <label for="">Email <span class="text-danger text-xs">*</span></label>

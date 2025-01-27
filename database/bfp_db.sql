@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 29, 2024 at 02:13 AM
+-- Generation Time: Dec 04, 2024 at 02:13 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.2
 
@@ -42161,7 +42161,7 @@ CREATE TABLE `cert_info` (
 --
 
 INSERT INTO `cert_info` (`id`, `contactNumber`, `code`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '09263678055', 'BFP-QSF-FSED-005 Rev. 03 (03.03.20)', NULL, '2024-10-27 19:05:04', NULL);
+(1, '09263678055', 'BFP-QSF-FSED-005 Rev. 03 (03.03.20)', NULL, '2024-11-03 08:43:08', NULL);
 
 -- --------------------------------------------------------
 
@@ -42223,6 +42223,7 @@ CREATE TABLE `fire_inspection` (
   `owner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `validFrom` date DEFAULT NULL,
+  `validUntil` date DEFAULT NULL,
   `amountPaid` decimal(11,2) DEFAULT NULL,
   `ORNumber` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `dateOR` date DEFAULT NULL,
@@ -42230,6 +42231,9 @@ CREATE TABLE `fire_inspection` (
   `recommendPosition` varchar(255) DEFAULT NULL,
   `approved` varchar(255) DEFAULT NULL,
   `approvedPosition` varchar(255) DEFAULT NULL,
+  `inspectionOrderNumber` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ditControlNumber` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `buildingNumber` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `schedule` date DEFAULT NULL,
   `personnelID` int DEFAULT NULL,
   `status` int DEFAULT NULL,
@@ -44004,7 +44008,7 @@ CREATE TABLE `sms_token_identity` (
 --
 
 INSERT INTO `sms_token_identity` (`id`, `url`, `access_token`, `mobile_identity`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'https://api.pushbullet.com/v2/texts', 'upate this with new token', 'update this', NULL, '2024-10-28 03:47:35', NULL);
+(1, 'https://api.pushbullet.com/v2/texts', 'upate this with new token', 'update this', NULL, '2024-11-03 08:43:06', NULL);
 
 -- --------------------------------------------------------
 
@@ -44032,7 +44036,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `personnelID`, `applicantID`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `role`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, NULL, NULL, 'BFP Admin', 'bfp@admin.com', NULL, '$2y$10$7vvyPuBXRDQhplMLYxpFDuofSE6WoajC8k/3kBE73jAc9tS.0Erau', NULL, 1, NULL, '2024-08-26 22:01:56', NULL);
+(1, NULL, NULL, 'BFP Admin', 'bfphilongos02@gmail.com', '2024-11-03 01:07:55', '$2y$10$XB44rULpw5Xr39OyjePwSOqVASPdFTjTohyF8/2riuwhBoSSPmsWC', NULL, 1, NULL, '2024-08-26 22:01:56', NULL);
 
 --
 -- Indexes for dumped tables
@@ -44194,7 +44198,7 @@ ALTER TABLE `sms_token_identity`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

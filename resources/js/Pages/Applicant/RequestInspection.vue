@@ -209,7 +209,7 @@ const createFSICBusinessFormData = () => {
                                         </select>
 
                                         <label for="" class="mb-1">Purok/Street <span class="text-danger text-xs">*</span></label>
-                                        <input type="text" class="form-control mb-3" v-model="createFSECForm.purok" required>
+                                        <input type="text" class="form-control form-control-sm mb-3" v-model="createFSECForm.purok" required>
 
                                     </div>
                                     <div class="modal-footer">
@@ -254,7 +254,7 @@ const createFSICBusinessFormData = () => {
                                         </select>
 
                                         <label for="" class="mb-1">Purok/Street <span class="text-danger text-xs">*</span></label>
-                                        <input type="text" class="form-control mb-3" v-model="createFSICOccupancyForm.purok" required>
+                                        <input type="text" class="form-control form-control-sm mb-3" v-model="createFSICOccupancyForm.purok" required>
 
                                     </div>
                                     <div class="modal-footer">
@@ -299,7 +299,7 @@ const createFSICBusinessFormData = () => {
                                         </select>
 
                                         <label for="" class="mb-1">Purok/Street <span class="text-danger text-xs">*</span></label>
-                                        <input type="text" class="form-control mb-3" v-model="createFSICBusinessForm.purok" required>
+                                        <input type="text" class="form-control form-control-sm mb-3" v-model="createFSICBusinessForm.purok" required>
 
                                     </div>
                                     <div class="modal-footer">

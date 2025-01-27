@@ -12,6 +12,8 @@ class FireIncident extends Model
 
     protected $table = 'fire_incident';
 
+    public $relation = ['brgy'];
+
     protected $fillable = [
         'owner',
         'location',
@@ -24,4 +26,8 @@ class FireIncident extends Model
         'structureType',
         'estimatedValueLoss'
     ];
+
+    public function brgy() {
+        return $this->hasOne(Barangay::class, 'brgyCode', 'location');
+    }
 }
